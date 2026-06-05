@@ -1,0 +1,13 @@
+{
+  "hosting": {
+    "site": "punto-de-equilibrio-ace90",
+    "public": "public",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
