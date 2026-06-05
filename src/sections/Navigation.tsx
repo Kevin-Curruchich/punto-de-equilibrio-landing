@@ -55,15 +55,27 @@ export default function Navigation() {
           : "bg-transparent"
       }`}
     >
-      <div className="flex items-center justify-between px-6 md:px-10 py-4 max-w-[1400px] mx-auto">
+      <div className="flex items-center justify-between px-4 sm:px-6 md:px-10 py-4 max-w-[1400px] mx-auto">
         {/* Left - Logo */}
         <Button
           variant="ghost"
           onClick={() => scrollTo("#hero")}
-          className="group h-auto bg-transparent px-0 py-0 hover:bg-transparent"
+          className="group h-auto gap-1.5 md:gap-2.5 bg-transparent px-0 py-0 hover:bg-transparent"
         >
-          <AnimatedSymbolLogo className="w-8 h-8 text-k-primary transition-transform duration-300 group-hover:scale-110" />
-          <span className="font-sans text-base font-medium tracking-wide text-k-text">
+          <AnimatedSymbolLogo
+            className={`shrink-0 text-k-primary transition-transform duration-300 group-hover:scale-110 ${
+              scrolled
+                ? "size-11 sm:size-12 md:size-24"
+                : "size-12 sm:size-14 md:size-28"
+            }`}
+          />
+          <span
+            className={`font-sans tracking-wide text-k-text transition-all duration-300 ${
+              scrolled
+                ? "text-lg md:text-xl font-semibold"
+                : "text-lg sm:text-xl md:text-2xl font-semibold"
+            }`}
+          >
             Punto de Equilibrio
           </span>
         </Button>
@@ -76,9 +88,10 @@ export default function Navigation() {
         {/* Right - CTA Button */}
         <Button
           onClick={openCalendly}
-          className="border border-k-primary bg-transparent px-5 py-2.5 text-xs font-medium tracking-wide text-k-primary hover:bg-k-primary hover:text-white transition-all duration-400"
+          className="shrink-0 border border-k-primary bg-transparent px-3 sm:px-5 py-2 sm:py-2.5 text-[10px] sm:text-xs font-medium tracking-wide text-k-primary hover:bg-k-primary hover:text-white transition-all duration-400"
         >
-          AGENDAR CITA
+          <span className="sm:hidden">CITA</span>
+          <span className="hidden sm:inline">AGENDAR CITA</span>
         </Button>
       </div>
     </nav>

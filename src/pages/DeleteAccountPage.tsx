@@ -3,13 +3,6 @@ import type { FormEvent } from "react";
 
 const SUPPORT_EMAIL = "hola@puntodeequilibrio.mx";
 
-const deletionSteps = [
-  "Inicia sesión en la aplicación con la cuenta que deseas eliminar.",
-  "Ve a Configuración > Cuenta > Eliminar cuenta.",
-  "Confirma la solicitud de eliminación y sigue las instrucciones en pantalla.",
-  "Recibirás una confirmación dentro de la app y/o por correo electrónico.",
-];
-
 type DeleteRequestFormData = {
   fullName: string;
   contactEmail: string;
