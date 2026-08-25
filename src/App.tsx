@@ -5,7 +5,7 @@ import StatsSection from "@/sections/StatsSection";
 import ServicesSection from "@/sections/ServicesSection";
 import TestimonialsSection from "@/sections/TestimonialsSection";
 import FAQSection from "@/sections/FAQSection";
-import LocationSection from "@/sections/LocationSection";
+
 import CTAFooter from "@/sections/CTAFooter";
 import TermsAndConditionsPage from "@/pages/TermsAndConditionsPage";
 import DeleteAccountPage from "@/pages/DeleteAccountPage";
@@ -41,7 +41,7 @@ export default function App() {
         <ServicesSection />
         <TestimonialsSection />
         <FAQSection />
-        {/* <LocationSection /> */}
+
         <CTAFooter />
       </main>
 
