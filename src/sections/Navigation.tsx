@@ -38,14 +38,6 @@ export default function Navigation() {
     }
   };
 
-  const openCalendly = () => {
-    if (window.Calendly) {
-      window.Calendly.initPopupWidget({
-        url: "https://calendar.app.google/bUvqTs15efDcqesv8",
-      });
-    }
-  };
-
   return (
     <nav
       ref={navRef}

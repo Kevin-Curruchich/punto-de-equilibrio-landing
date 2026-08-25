@@ -1,16 +1,10 @@
-import { useEffect, useRef, type ComponentType } from "react";
+import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { MapPin, Navigation, Clock3 } from "lucide-react";
-import { MapContainer, TileLayer, CircleMarker, Popup } from "react-leaflet";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const MapContainerAny = MapContainer as unknown as ComponentType<any>;
-const TileLayerAny = TileLayer as unknown as ComponentType<any>;
-const CircleMarkerAny = CircleMarker as unknown as ComponentType<any>;
-
-const clinicPosition: [number, number] = [19.3618, -99.1677];
 const googleMapsUrl =
   "https://www.google.com/maps/search/?api=1&query=Av.+Insurgentes+Sur+1234,+Ciudad+de+M%C3%A9xico";
 const wazeUrl = "https://waze.com/ul?ll=19.3618,-99.1677&navigate=yes";
@@ -82,30 +76,23 @@ export default function LocationSection() {
           ref={contentRef}
           className="mt-16 md:mt-20 grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-10"
         >
-          <div className="lg:col-span-3 rounded-xl border border-k-line overflow-hidden shadow-card opacity-0">
-            <MapContainerAny
-              center={clinicPosition}
-              zoom={14}
-              scrollWheelZoom={false}
-              className="h-[360px] md:h-[460px] w-full"
-            >
-              <TileLayerAny
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
-              <CircleMarkerAny
-                center={clinicPosition}
-                radius={11}
-                pathOptions={{
-                  color: "#2F627F",
-                  weight: 2,
-                  fillColor: "#35769B",
-                  fillOpacity: 0.95,
-                }}
-              >
-                <Popup>Punto de Equilibrio Fisioterapia</Popup>
-              </CircleMarkerAny>
-            </MapContainerAny>
+          <div className="lg:col-span-3 rounded-xl border border-k-line bg-white p-6 md:p-8 shadow-card opacity-0 flex items-center justify-center min-h-[260px] md:min-h-[360px]">
+            <div className="w-full max-w-md rounded-[1.5rem] border border-k-line bg-[#f7f4ee] p-6 text-center">
+              <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-k-primary/10 text-k-primary">
+                <MapPin className="h-6 w-6" />
+              </div>
+              <p className="text-xs uppercase tracking-[0.2em] text-k-text-muted">
+                Zona céntrica
+              </p>
+              <h4 className="mt-3 text-2xl font-normal text-k-text">
+                Av. Insurgentes Sur 1234
+              </h4>
+              <p className="mt-3 text-sm leading-7 text-k-text-secondary">
+                Ciudad de México
+                <br />
+                Fácil acceso en transporte público y coche.
+              </p>
+            </div>
           </div>
 
           <aside className="lg:col-span-2 rounded-xl border border-k-line bg-white p-7 md:p-8 shadow-card opacity-0">

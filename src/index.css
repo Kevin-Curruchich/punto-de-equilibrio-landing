@@ -45,6 +45,7 @@
 
   body {
     @apply bg-cream text-k-text font-sans antialiased;
+    background: #f3f1ee;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
