@@ -1,7 +1,8 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import WaveCanvas from "@/components/WaveCanvas";
 import { getLenis } from "@/hooks/useLenis";
+import GoogleCalendarBookingDialog from "@/components/GoogleCalendarBookingDialog";
 import { ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -13,6 +14,7 @@ export default function HeroSection() {
   const ctaRef = useRef<HTMLButtonElement>(null);
   const badgeRef = useRef<HTMLDivElement>(null);
   const chevronRef = useRef<HTMLDivElement>(null);
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
 
   useEffect(() => {
     const tl = gsap.timeline({ delay: 0.3 });
@@ -65,14 +67,6 @@ export default function HeroSection() {
     }
   };
 
-  const openCalendly = () => {
-    if (window.Calendly) {
-      window.Calendly.initPopupWidget({
-        url: "https://calendly.com/Punto de Equilibrio-fisioterapia/evaluacion-gratuita",
-      });
-    }
-  };
-
   return (
     <section
       id="hero"
@@ -96,10 +90,11 @@ export default function HeroSection() {
         {/* Title */}
         <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-normal leading-[1.05] tracking-tight text-k-text">
           <div ref={titleLine1Ref} className="opacity-0">
-            Recupera tu
+            ¡Llevamos la
           </div>
           <div ref={titleLine2Ref} className="opacity-0">
-            <span className="font-serif italic">movimiento.</span>
+            <span className="font-serif italic">fisioterapia</span> hasta tu
+            hogar!
           </div>
         </h1>
 
@@ -108,25 +103,25 @@ export default function HeroSection() {
           ref={subtitleRef}
           className="mt-6 text-base leading-[1.7] text-k-text-secondary max-w-[480px] opacity-0"
         >
-          Fisioterapia especializada para lesiones, rehabilitación y dolor
-          crónico. Recupera tu calidad de vida con tratamientos personalizados.
+          Atención fisioterapéutica personalizada en la comodidad de tu hogar,
+          para recuperar tu bienestar y calidad de vida.
         </p>
 
         {/* CTA Button */}
         <Button
           size="lg"
           ref={ctaRef}
-          onClick={openCalendly}
+          onClick={() => setIsBookingOpen(true)}
           className="mt-10 bg-k-primary text-white px-10 py-4 text-sm font-medium hover:bg-k-green-dark hover:scale-[1.03] hover:shadow-cta transition-all duration-300 opacity-0"
         >
-          Reservar Evaluación
+          Agenda tu cita hoy
         </Button>
 
         {/* Trust Badge */}
         <div ref={badgeRef} className="mt-16 flex items-center gap-2 opacity-0">
           <span className="w-2 h-2 rounded-full bg-k-secondary" />
           <span className="text-sm text-k-text-secondary font-sans">
-            +500 pacientes recuperados
+            Fisioterapia a domicilio
           </span>
         </div>
       </div>
@@ -139,6 +134,11 @@ export default function HeroSection() {
       >
         <ChevronDown className="w-6 h-6 text-k-text-muted animate-bounce-down" />
       </div>
+
+      <GoogleCalendarBookingDialog
+        open={isBookingOpen}
+        onOpenChange={setIsBookingOpen}
+      />
     </section>
   );
 }

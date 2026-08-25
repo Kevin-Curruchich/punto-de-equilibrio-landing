@@ -41,7 +41,7 @@ export default function Navigation() {
   const openCalendly = () => {
     if (window.Calendly) {
       window.Calendly.initPopupWidget({
-        url: "https://calendly.com/punto-de-equilibrio-fisioterapia/evaluacion-gratuita",
+        url: "https://calendar.app.google/bUvqTs15efDcqesv8",
       });
     }
   };
@@ -65,33 +65,26 @@ export default function Navigation() {
           <AnimatedSymbolLogo
             className={`shrink-0 text-k-primary transition-transform duration-300 group-hover:scale-110 ${
               scrolled
-                ? "size-11 sm:size-12 md:size-24"
-                : "size-12 sm:size-14 md:size-28"
+                ? "size-12 sm:size-12 md:size-12"
+                : "size-12 sm:size-14 md:size-12"
             }`}
           />
           <span
-            className={`font-sans tracking-wide text-k-text transition-all duration-300 ${
+            className={`font-poppins tracking-wide text-k-text transition-all duration-300 ${
               scrolled
-                ? "text-lg md:text-xl font-semibold"
-                : "text-lg sm:text-xl md:text-2xl font-semibold"
+                ? "text-lg md:text-xl font-normal"
+                : "text-lg sm:text-xl md:text-2xl font-normal"
             }`}
           >
-            Punto de Equilibrio
+            Punto de
           </span>
-        </Button>
-
-        {/* Center - Tagline */}
-        <span className="hidden md:block font-sans text-[10px] font-normal uppercase tracking-[0.1em] text-k-text-secondary">
-          FISIOTERAPIA &amp; WELLNESS
-        </span>
-
-        {/* Right - CTA Button */}
-        <Button
-          onClick={openCalendly}
-          className="shrink-0 border border-k-primary bg-transparent px-3 sm:px-5 py-2 sm:py-2.5 text-[10px] sm:text-xs font-medium tracking-wide text-k-primary hover:bg-k-primary hover:text-white transition-all duration-400"
-        >
-          <span className="sm:hidden">CITA</span>
-          <span className="hidden sm:inline">AGENDAR CITA</span>
+          <span
+            className={`font-serif italic text-k-text transition-all duration-300 ${
+              scrolled ? "text-lg md:text-xl" : "text-lg sm:text-xl md:text-2xl"
+            }`}
+          >
+            Equilibrio.
+          </span>
         </Button>
       </div>
     </nav>

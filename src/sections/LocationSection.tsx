@@ -110,8 +110,8 @@ export default function LocationSection() {
 
           <aside className="lg:col-span-2 rounded-xl border border-k-line bg-white p-7 md:p-8 shadow-card opacity-0">
             <h3 className="text-2xl font-normal text-k-text">
-              Clínica{" "}
-              <span className="font-serif italic">Punto de Equilibrio</span>
+              Clínica <span className="font-poppins">Punto de </span>
+              <span className="font-serif italic">Equilibrio</span>
             </h3>
 
             <ul className="mt-7 space-y-6">

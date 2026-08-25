@@ -40,10 +40,12 @@
 
   html {
     scroll-behavior: auto;
+    overflow-x: hidden;
   }
 
   body {
     @apply bg-cream text-k-text font-sans antialiased;
+    overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }

@@ -1,23 +1,25 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { Instagram, Facebook, MessageCircle } from "lucide-react";
+import { Instagram, Facebook } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import GoogleCalendarBookingDialog from "@/components/GoogleCalendarBookingDialog";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const footerServices = [
-  "Fisioterapia Deportiva",
-  "Rehabilitación Postquirúrgica",
-  "Terapia Manual",
-  "Entrenamiento Terapéutico",
-  "Masaje Deportivo",
+  "Lesiones musculares",
+  "Terapia neurológica",
+  "Fisioterapia geriátrica",
+  "Fisioterapia pediátrica",
+  "Dolor y rehabilitación musculoesquelética",
 ];
 
 export default function CTAFooter() {
   const ctaRef = useRef<HTMLElement>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const ctaContentRef = useRef<HTMLDivElement>(null);
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
 
   useEffect(() => {
     if (!ctaRef.current) return;
@@ -58,14 +60,6 @@ export default function CTAFooter() {
     return () => ctx.revert();
   }, []);
 
-  const openCalendly = () => {
-    if (window.Calendly) {
-      window.Calendly.initPopupWidget({
-        url: "https://calendly.com/Punto de Equilibrio-fisioterapia/evaluacion-gratuita",
-      });
-    }
-  };
-
   return (
     <>
       {/* CTA Section */}
@@ -85,24 +79,29 @@ export default function CTAFooter() {
 
           <div ref={ctaContentRef} className="mt-6">
             <p className="text-base md:text-[17px] text-k-text-secondary max-w-[480px] mx-auto leading-[1.7] font-sans">
-              Agenda tu evaluación inicial gratuita y da el primer paso hacia
-              una vida sin dolor.
+              Agenda tu evaluación inicial y da el primer paso hacia una vida
+              sin dolor.
             </p>
 
             <Button
               size="lg"
-              onClick={openCalendly}
-              className="mt-12 bg-k-primary px-12 py-5 text-sm font-medium text-white hover:bg-k-green-dark hover:scale-[1.03] hover:shadow-cta transition-all duration-300 tracking-[0.05em] uppercase"
+              onClick={() => setIsBookingOpen(true)}
+              className="mx-auto mt-12 w-full max-w-[320px] bg-k-primary px-6 py-5 text-sm font-medium text-white hover:bg-k-green-dark hover:scale-[1.03] hover:shadow-cta transition-all duration-300 tracking-[0.05em] uppercase"
             >
-              AGENDAR EVALUACIÓN GRATUITA
+              AGENDAR EVALUACIÓN
             </Button>
 
             <p className="mt-5 text-[13px] text-k-text-muted font-sans">
-              Primera consulta sin costo · Sin compromiso
+              Atención personalizada en la comodidad de tu hogar
             </p>
           </div>
         </div>
       </section>
+
+      <GoogleCalendarBookingDialog
+        open={isBookingOpen}
+        onOpenChange={setIsBookingOpen}
+      />
 
       {/* Footer */}
       <footer className="bg-k-green-dark text-white">
@@ -112,13 +111,11 @@ export default function CTAFooter() {
             {/* Brand */}
             <div>
               <h3 className="font-serif text-2xl font-normal text-white">
-                Punto de Equilibrio
+                <span className="font-poppins not-italic">Punto de </span>
+                <span className="italic">Equilibrio</span>
               </h3>
               <p className="mt-2 text-xs text-white/50 font-sans">
                 Fisioterapia &amp; Wellness
-              </p>
-              <p className="mt-4 text-sm text-white/60 font-sans italic">
-                Recupera tu movimiento.
               </p>
             </div>
 
@@ -145,18 +142,15 @@ export default function CTAFooter() {
               </h4>
               <ul className="space-y-1">
                 <li className="text-sm text-white/70 font-sans">
-                  +52 55 1234 5678
+                  +502 3371 2445
                 </li>
                 <li>
                   <a
-                    href="mailto:hola@Punto de Equilibrio.mx"
+                    href="mailto:info@punto-de-equilibrio.com"
                     className="text-sm text-white/70 hover:text-white transition-colors duration-300 font-sans"
                   >
-                    hola@Punto de Equilibrio.mx
+                    info@punto-de-equilibrio.com
                   </a>
-                </li>
-                <li className="text-sm text-white/70 font-sans">
-                  Av. Insurgentes Sur 1234, CDMX
                 </li>
                 <li className="text-sm text-white/70 font-sans">
                   Lun-Vie: 8:00 - 20:00
@@ -174,7 +168,7 @@ export default function CTAFooter() {
               </h4>
               <div className="flex items-center gap-4 mt-4">
                 <a
-                  href="https://instagram.com"
+                  href="https://www.instagram.com/puntoequilibrio26/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-white/70 hover:text-white transition-colors duration-300"
@@ -190,15 +184,6 @@ export default function CTAFooter() {
                   aria-label="Facebook"
                 >
                   <Facebook className="w-5 h-5" />
-                </a>
-                <a
-                  href="https://wa.me/525512345678"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-white/70 hover:text-white transition-colors duration-300"
-                  aria-label="WhatsApp"
-                >
-                  <MessageCircle className="w-5 h-5" />
                 </a>
               </div>
             </div>

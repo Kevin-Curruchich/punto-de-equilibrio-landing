@@ -41,7 +41,7 @@ export default function App() {
         <ServicesSection />
         <TestimonialsSection />
         <FAQSection />
-        <LocationSection />
+        {/* <LocationSection /> */}
         <CTAFooter />
       </main>
 

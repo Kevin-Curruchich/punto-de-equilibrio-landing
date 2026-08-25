@@ -12,14 +12,14 @@ const faqs = [
       "Las sesiones individuales tienen una duración de 45 a 60 minutos. Durante este tiempo realizamos una evaluación constante de tu progreso y ajustamos el tratamiento según tus necesidades.",
   },
   {
-    question: "¿Necesito cita previa o aceptan pacientes sin cita?",
+    question: "¿Cómo agendo mi cita de fisioterapia a domicilio?",
     answer:
-      "Trabajamos exclusivamente con cita previa para garantizar que cada paciente reciba la atención personalizada y el tiempo que merece. Puedes agendar tu cita fácilmente a través de nuestro sitio web o llamando a la clínica.",
+      "Trabajamos con cita previa para reservar el tiempo de atención y confirmar la disponibilidad en tu zona. Puedes agendarla desde el botón de reservas de nuestro sitio web.",
   },
   {
-    question: "¿Qué debo llevar a mi primera consulta?",
+    question: "¿Qué debo preparar para mi primera consulta a domicilio?",
     answer:
-      "Te recomendamos traer estudios previos relevantes (rayos X, resonancias, informes médicos), ropa cómoda que permita el movimiento, y una lista de medicamentos que estés tomando actualmente. Si tienes seguro médico, también tu carnet.",
+      "Ten a la mano tus estudios previos relevantes, informes médicos y una lista de medicamentos. Usa ropa cómoda que permita el movimiento y prepara un espacio despejado donde podamos realizar la evaluación. Nosotros llevamos el material necesario para la sesión.",
   },
   {
     question: "¿Cuántas sesiones necesitaré para recuperarme?",
@@ -27,9 +27,9 @@ const faqs = [
       "El número de sesiones varía según la condición, su severidad y tu respuesta al tratamiento. Después de la evaluación inicial, te proporcionaremos un plan de tratamiento con un estimado. En promedio, los pacientes notan mejoría significativa entre 4 y 8 sesiones.",
   },
   {
-    question: "¿Ofrecen servicio a domicilio?",
+    question: "¿Cómo funciona una sesión de fisioterapia a domicilio?",
     answer:
-      "Sí, contamos con servicio de fisioterapia a domicilio para pacientes con movilidad reducida o que prefieren ser atendidos en la comodidad de su hogar. Consulta disponibilidad según tu zona.",
+      "El fisioterapeuta se traslada a tu domicilio con el material necesario para realizar la evaluación y el tratamiento. La atención se adapta a tu condición, tus objetivos y el espacio disponible en casa.",
   },
 ];
 
