@@ -41,7 +41,7 @@ const sections = [
   },
   {
     title: "11. Contacto",
-    body: "Si tienes dudas sobre estos términos, escríbenos a hola@puntodeequilibrio.mx.",
+    body: "Si tienes dudas sobre estos términos, escríbenos a hola@punto-de-equilibrio.com.",
   },
 ];
 

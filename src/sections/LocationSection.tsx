@@ -6,8 +6,9 @@ import { MapPin, Navigation, Clock3 } from "lucide-react";
 gsap.registerPlugin(ScrollTrigger);
 
 const googleMapsUrl =
-  "https://www.google.com/maps/search/?api=1&query=Av.+Insurgentes+Sur+1234,+Ciudad+de+M%C3%A9xico";
-const wazeUrl = "https://waze.com/ul?ll=19.3618,-99.1677&navigate=yes";
+  "https://www.google.com/maps/search/?api=1&query=Tecp%C3%A1n%2C+Guatemala";
+const wazeUrl =
+  "https://waze.com/ul?q=Tecp%C3%A1n%2C%20Guatemala&navigate=yes";
 
 export default function LocationSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -85,10 +86,10 @@ export default function LocationSection() {
                 Zona céntrica
               </p>
               <h4 className="mt-3 text-2xl font-normal text-k-text">
-                Av. Insurgentes Sur 1234
+                Tecpán
               </h4>
               <p className="mt-3 text-sm leading-7 text-k-text-secondary">
-                Ciudad de México
+                Guatemala
                 <br />
                 Fácil acceso en transporte público y coche.
               </p>
@@ -109,7 +110,7 @@ export default function LocationSection() {
                     Dirección
                   </p>
                   <p className="mt-1 text-sm text-k-text-secondary leading-[1.7]">
-                    Av. Insurgentes Sur 1234, Ciudad de México
+                    Tecpán, Chimaltenango, Guatemala
                   </p>
                 </div>
               </li>

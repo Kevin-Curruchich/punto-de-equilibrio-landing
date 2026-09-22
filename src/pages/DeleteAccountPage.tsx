@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import type { FormEvent } from "react";
 
-const SUPPORT_EMAIL = "hola@puntodeequilibrio.mx";
+const SUPPORT_EMAIL = "hola@punto-de-equilibrio.com";
 
 type DeleteRequestFormData = {
   fullName: string;

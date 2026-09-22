@@ -10,17 +10,36 @@ import CTAFooter from "@/sections/CTAFooter";
 import TermsAndConditionsPage from "@/pages/TermsAndConditionsPage";
 import DeleteAccountPage from "@/pages/DeleteAccountPage";
 
-// Calendly type declaration
-declare global {
-  interface Window {
-    Calendly?: {
-      initPopupWidget: (options: { url: string }) => void;
-    };
-  }
+function updatePageMetadata(pathname: string) {
+  const metadata = {
+    "/terminos-y-condiciones": {
+      title: "Términos y Condiciones | Punto de Equilibrio",
+      description:
+        "Consulta los términos y condiciones de uso de Punto de Equilibrio.",
+    },
+    "/eliminar-cuenta": {
+      title: "Eliminar cuenta | Punto de Equilibrio",
+      description:
+        "Solicita la eliminación de tu cuenta y datos asociados de Punto de Equilibrio.",
+    },
+  }[pathname];
+
+  if (!metadata) return;
+
+  document.title = metadata.title;
+  document
+    .querySelector('meta[name="description"]')
+    ?.setAttribute("content", metadata.description);
+  document
+    .querySelector('link[rel="canonical"]')
+    ?.setAttribute("href", `https://punto-de-equilibrio.com${pathname}`);
 }
 
 export default function App() {
   const pathname = window.location.pathname.toLowerCase();
+
+  useLenis();
+  updatePageMetadata(pathname);
 
   if (pathname === "/terminos-y-condiciones") {
     return <TermsAndConditionsPage />;
@@ -29,8 +48,6 @@ export default function App() {
   if (pathname === "/eliminar-cuenta") {
     return <DeleteAccountPage />;
   }
-
-  useLenis();
 
   return (
     <div className="relative">
@@ -44,12 +61,6 @@ export default function App() {
 
         <CTAFooter />
       </main>
-
-      {/* Calendly Widget Script */}
-      <script
-        src="https://assets.calendly.com/assets/external/widget.js"
-        async
-      />
     </div>
   );
 }
