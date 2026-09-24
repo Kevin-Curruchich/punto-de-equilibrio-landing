@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import useRevealOnScroll from "@/hooks/useRevealOnScroll";
 import { ArrowRight } from "lucide-react";
 import {
   type CarouselApi,
@@ -8,8 +7,6 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const services = [
   {
@@ -45,34 +42,9 @@ const services = [
 ];
 
 export default function ServicesSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const headingRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRevealOnScroll<HTMLElement>();
   const isCarouselPausedRef = useRef(false);
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
-
-  useEffect(() => {
-    if (!sectionRef.current) return;
-
-    const ctx = gsap.context(() => {
-      // Heading animation
-      gsap.fromTo(
-        headingRef.current,
-        { y: 30, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: headingRef.current,
-            start: "top 85%",
-          },
-        },
-      );
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
 
   useEffect(() => {
     if (!carouselApi) return;
@@ -93,7 +65,7 @@ export default function ServicesSection() {
     >
       <div className="max-w-[1200px] mx-auto px-6">
         {/* Heading */}
-        <div ref={headingRef} className="text-center opacity-0">
+        <div className="text-center">
           <h2 className="text-4xl md:text-5xl lg:text-[56px] font-normal leading-[1.1] tracking-tight text-k-text">
             Nuestros <span className="font-serif italic">servicios</span>
           </h2>

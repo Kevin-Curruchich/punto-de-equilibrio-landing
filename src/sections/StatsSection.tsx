@@ -1,9 +1,5 @@
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import useRevealOnScroll from "@/hooks/useRevealOnScroll";
 import { ClipboardCheck, HeartPulse, Home } from "lucide-react";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const differentiators = [
   {
@@ -27,53 +23,9 @@ const differentiators = [
 ];
 
 export default function StatsSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const headingRef = useRef<HTMLHeadingElement>(null);
-  const diffRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!sectionRef.current) return;
-
-    const ctx = gsap.context(() => {
-      // Heading animation
-      gsap.fromTo(
-        headingRef.current,
-        { y: 40, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 1.0,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: headingRef.current,
-            start: "top 85%",
-          },
-        },
-      );
-
-      // Differentiators animation with stagger
-      if (diffRef.current) {
-        const diffItems = diffRef.current.children;
-        gsap.fromTo(
-          diffItems,
-          { y: 40, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.9,
-            stagger: 0.2,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: diffRef.current,
-              start: "top 85%",
-            },
-          },
-        );
-      }
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
+  const sectionRef = useRevealOnScroll<HTMLElement>();
+  const headingRef = useRevealOnScroll<HTMLHeadingElement>();
+  const diffRef = useRevealOnScroll<HTMLDivElement>();
 
   return (
     <section
@@ -85,7 +37,7 @@ export default function StatsSection() {
         {/* Heading */}
         <h2
           ref={headingRef}
-          className="text-4xl md:text-5xl lg:text-[56px] font-normal leading-[1.1] tracking-tight text-k-text text-center opacity-0"
+          className="reveal-on-scroll text-4xl md:text-5xl lg:text-[56px] font-normal leading-[1.1] tracking-tight text-k-text text-center"
         >
           Tu recuperación{" "}
           <span className="font-serif italic">empieza en casa</span>
@@ -94,10 +46,14 @@ export default function StatsSection() {
         {/* Differentiators Grid */}
         <div
           ref={diffRef}
-          className="mt-16 md:mt-20 grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12"
+          className="reveal-on-scroll reveal-stagger mt-16 md:mt-20 grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12"
         >
-          {differentiators.map((item) => (
-            <div key={item.title} className="text-center opacity-0">
+          {differentiators.map((item, index) => (
+            <div
+              key={item.title}
+              className="text-center"
+              style={{ "--reveal-index": index } as React.CSSProperties}
+            >
               <div className="flex justify-center">
                 <item.icon
                   className="w-10 h-10 text-k-primary"

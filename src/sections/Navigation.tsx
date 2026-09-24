@@ -1,6 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { getLenis } from "@/hooks/useLenis";
-import AnimatedSymbolLogo from "@/components/AnimatedSymbolLogo";
 import { Button } from "@/components/ui/button";
 
 export default function Navigation() {
@@ -32,10 +30,7 @@ export default function Navigation() {
   }, []);
 
   const scrollTo = (id: string) => {
-    const lenis = getLenis();
-    if (lenis) {
-      lenis.scrollTo(id);
-    }
+    document.querySelector(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -54,8 +49,11 @@ export default function Navigation() {
           onClick={() => scrollTo("#hero")}
           className="group h-auto gap-1.5 md:gap-2.5 bg-transparent px-0 py-0 hover:bg-transparent"
         >
-          <AnimatedSymbolLogo
-            className={`shrink-0 text-k-primary transition-transform duration-300 group-hover:scale-110 ${
+          <img
+            src="/symbol.svg"
+            alt=""
+            aria-hidden="true"
+            className={`shrink-0 object-contain transition-transform duration-300 group-hover:scale-110 ${
               scrolled
                 ? "size-12 sm:size-12 md:size-12"
                 : "size-12 sm:size-14 md:size-12"

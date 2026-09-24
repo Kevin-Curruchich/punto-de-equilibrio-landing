@@ -1,4 +1,3 @@
-import useLenis from "@/hooks/useLenis";
 import Navigation from "@/sections/Navigation";
 import HeroSection from "@/sections/HeroSection";
 import StatsSection from "@/sections/StatsSection";
@@ -38,7 +37,6 @@ function updatePageMetadata(pathname: string) {
 export default function App() {
   const pathname = window.location.pathname.toLowerCase();
 
-  useLenis();
   updatePageMetadata(pathname);
 
   if (pathname === "/terminos-y-condiciones") {

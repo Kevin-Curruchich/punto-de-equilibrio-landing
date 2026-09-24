@@ -51,3 +51,137 @@
     -moz-osx-font-smoothing: grayscale;
   }
 }
+
+.reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(32px);
+  transition:
+    opacity 700ms ease,
+    transform 700ms ease;
+}
+
+.reveal-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-stagger > * {
+  transition-delay: calc(var(--reveal-index, 0) * 100ms);
+}
+
+.hero-reveal {
+  animation: hero-reveal 800ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.hero-reveal-delay-1 {
+  animation-delay: 160ms;
+}
+
+.hero-reveal-delay-2 {
+  animation-delay: 320ms;
+}
+
+.hero-reveal-delay-3 {
+  animation-delay: 480ms;
+}
+
+.hero-float {
+  animation: hero-float 3.5s ease-in-out infinite alternate;
+}
+
+.hero-float-delay {
+  animation-delay: 350ms;
+}
+
+.hero-blob {
+  animation: hero-blob 8s ease-in-out infinite alternate;
+}
+
+.hero-blob-delay-1 {
+  animation-delay: 800ms;
+}
+
+.hero-blob-delay-2 {
+  animation-delay: 1600ms;
+}
+
+.testimonial-swap {
+  animation: testimonial-swap 450ms ease both;
+}
+
+.faq-answer {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  overflow: hidden;
+  transition:
+    grid-template-rows 400ms ease,
+    opacity 300ms ease;
+}
+
+.faq-answer.is-open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.faq-answer > div {
+  min-height: 0;
+  overflow: hidden;
+}
+
+@keyframes hero-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-float {
+  from {
+    transform: translateY(-12px);
+  }
+  to {
+    transform: translateY(12px);
+  }
+}
+
+@keyframes hero-blob {
+  from {
+    transform: translate(-20px, -18px);
+  }
+  to {
+    transform: translate(20px, 18px);
+  }
+}
+
+@keyframes testimonial-swap {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-on-scroll,
+  .hero-reveal,
+  .hero-float,
+  .hero-blob,
+  .testimonial-swap {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .faq-answer {
+    transition: none;
+  }
+}

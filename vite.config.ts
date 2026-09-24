@@ -32,7 +32,6 @@ export default defineConfig({
             "@radix-ui/react-slot",
             "lucide-react",
           ],
-          "animation-vendor": ["gsap", "lenis"],
           "data-vendor": ["recharts", "date-fns"],
         },
       },

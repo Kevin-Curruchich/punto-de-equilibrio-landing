@@ -1,10 +1,7 @@
-import { useEffect, useRef, useState, useCallback } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useState } from "react";
+import useRevealOnScroll from "@/hooks/useRevealOnScroll";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const testimonials = [
   {
@@ -31,93 +28,16 @@ const testimonials = [
 ];
 
 export default function TestimonialsSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const headingRef = useRef<HTMLHeadingElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRevealOnScroll<HTMLElement>();
+  const headingRef = useRevealOnScroll<HTMLHeadingElement>();
+  const contentRef = useRevealOnScroll<HTMLDivElement>();
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const textRef = useRef<HTMLDivElement>(null);
+  const goTo = (index: number) => setActiveIndex(index);
 
-  useEffect(() => {
-    if (!sectionRef.current) return;
+  const goNext = () => goTo((activeIndex + 1) % testimonials.length);
 
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        headingRef.current,
-        { y: 40, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 1.0,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: headingRef.current,
-            start: "top 85%",
-          },
-        },
-      );
-
-      gsap.fromTo(
-        contentRef.current,
-        { y: 20, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 0.8,
-          delay: 0.3,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: contentRef.current,
-            start: "top 85%",
-          },
-        },
-      );
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  const goTo = useCallback(
-    (index: number) => {
-      if (isAnimating || index === activeIndex) return;
-      setIsAnimating(true);
-
-      if (textRef.current) {
-        gsap.to(textRef.current, {
-          opacity: 0,
-          x: index > activeIndex ? -20 : 20,
-          duration: 0.25,
-          ease: "power2.in",
-          onComplete: () => {
-            setActiveIndex(index);
-            gsap.fromTo(
-              textRef.current,
-              { opacity: 0, x: index > activeIndex ? 20 : -20 },
-              {
-                opacity: 1,
-                x: 0,
-                duration: 0.25,
-                ease: "power2.out",
-                onComplete: () => setIsAnimating(false),
-              },
-            );
-          },
-        });
-      } else {
-        setActiveIndex(index);
-        setIsAnimating(false);
-      }
-    },
-    [activeIndex, isAnimating],
-  );
-
-  const goNext = useCallback(() => {
-    goTo((activeIndex + 1) % testimonials.length);
-  }, [activeIndex, goTo]);
-
-  const goPrev = useCallback(() => {
+  const goPrev = () =>
     goTo((activeIndex - 1 + testimonials.length) % testimonials.length);
-  }, [activeIndex, goTo]);
 
   const current = testimonials[activeIndex];
 
@@ -131,14 +51,17 @@ export default function TestimonialsSection() {
         {/* Heading */}
         <h2
           ref={headingRef}
-          className="text-4xl md:text-5xl lg:text-[56px] font-normal leading-[1.1] tracking-tight text-k-text text-center opacity-0"
+          className="reveal-on-scroll text-4xl md:text-5xl lg:text-[56px] font-normal leading-[1.1] tracking-tight text-k-text text-center"
         >
           Lo que dicen{" "}
           <span className="font-serif italic">nuestros pacientes</span>
         </h2>
 
         {/* Testimonial Carousel */}
-        <div ref={contentRef} className="mt-16 md:mt-20 relative opacity-0">
+        <div
+          ref={contentRef}
+          className="reveal-on-scroll mt-16 md:mt-20 relative"
+        >
           {/* Navigation Arrows - Desktop only */}
           <Button
             variant="ghost"
@@ -160,7 +83,7 @@ export default function TestimonialsSection() {
 
           {/* Testimonial Content */}
           <div className="max-w-[700px] mx-auto text-center">
-            <div ref={textRef}>
+            <div key={activeIndex} className="testimonial-swap">
               {/* Quote Mark */}
               <span className="text-7xl md:text-[80px] font-serif text-k-secondary/55 leading-[0.5] block mb-4">
                 &ldquo;

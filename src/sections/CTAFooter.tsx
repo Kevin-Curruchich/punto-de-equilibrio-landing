@@ -1,11 +1,9 @@
-import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useRef, useState } from "react";
+import useRevealOnScroll from "@/hooks/useRevealOnScroll";
 import { Instagram, Facebook } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import GoogleCalendarBookingDialog from "@/components/GoogleCalendarBookingDialog";
-
-gsap.registerPlugin(ScrollTrigger);
+import { trackEvent } from "@/lib/firebase";
 
 const footerServices = [
   "Lesiones musculares",
@@ -17,48 +15,9 @@ const footerServices = [
 
 export default function CTAFooter() {
   const ctaRef = useRef<HTMLElement>(null);
-  const headingRef = useRef<HTMLHeadingElement>(null);
-  const ctaContentRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRevealOnScroll<HTMLHeadingElement>();
+  const ctaContentRef = useRevealOnScroll<HTMLDivElement>();
   const [isBookingOpen, setIsBookingOpen] = useState(false);
-
-  useEffect(() => {
-    if (!ctaRef.current) return;
-
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        headingRef.current,
-        { y: 40, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 1.2,
-          ease: "power4.out",
-          scrollTrigger: {
-            trigger: headingRef.current,
-            start: "top 85%",
-          },
-        },
-      );
-
-      gsap.fromTo(
-        ctaContentRef.current?.children || [],
-        { opacity: 0 },
-        {
-          opacity: 1,
-          duration: 0.8,
-          stagger: 0.15,
-          delay: 0.3,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: ctaContentRef.current,
-            start: "top 85%",
-          },
-        },
-      );
-    }, ctaRef);
-
-    return () => ctx.revert();
-  }, []);
 
   return (
     <>
@@ -71,13 +30,13 @@ export default function CTAFooter() {
         <div className="max-w-[800px] mx-auto px-6 text-center">
           <h2
             ref={headingRef}
-            className="text-4xl md:text-5xl lg:text-7xl font-normal leading-[1.05] tracking-tight text-k-text opacity-0"
+            className="reveal-on-scroll text-4xl md:text-5xl lg:text-7xl font-normal leading-[1.05] tracking-tight text-k-text"
           >
             Empieza tu{" "}
             <span className="font-serif italic">recuperación hoy</span>
           </h2>
 
-          <div ref={ctaContentRef} className="mt-6">
+          <div ref={ctaContentRef} className="reveal-on-scroll mt-6">
             <p className="text-base md:text-[17px] text-k-text-secondary max-w-[480px] mx-auto leading-[1.7] font-sans">
               Agenda tu evaluación inicial y da el primer paso hacia una vida
               sin dolor.
@@ -85,7 +44,10 @@ export default function CTAFooter() {
 
             <Button
               size="lg"
-              onClick={() => setIsBookingOpen(true)}
+              onClick={() => {
+                void trackEvent("booking_open", { location: "footer" });
+                setIsBookingOpen(true);
+              }}
               className="mx-auto mt-12 w-full max-w-[320px] bg-k-primary px-6 py-5 text-sm font-medium text-white hover:bg-k-green-dark hover:scale-[1.03] hover:shadow-cta transition-all duration-300 tracking-[0.05em] uppercase"
             >
               AGENDAR EVALUACIÓN

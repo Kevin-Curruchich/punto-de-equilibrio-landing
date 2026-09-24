@@ -1,9 +1,6 @@
-import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useState } from "react";
+import useRevealOnScroll from "@/hooks/useRevealOnScroll";
 import { Button } from "@/components/ui/button";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const faqs = [
   {
@@ -44,30 +41,6 @@ function FAQItem({
   isOpen: boolean;
   onToggle: () => void;
 }) {
-  const answerRef = useRef<HTMLDivElement>(null);
-  const contentRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!answerRef.current || !contentRef.current) return;
-
-    if (isOpen) {
-      const height = contentRef.current.scrollHeight;
-      gsap.to(answerRef.current, {
-        maxHeight: height,
-        opacity: 1,
-        duration: 0.4,
-        ease: "power2.out",
-      });
-    } else {
-      gsap.to(answerRef.current, {
-        maxHeight: 0,
-        opacity: 0,
-        duration: 0.3,
-        ease: "power2.in",
-      });
-    }
-  }, [isOpen]);
-
   return (
     <div className="border-b border-k-line">
       <Button
@@ -86,12 +59,8 @@ function FAQItem({
           +
         </span>
       </Button>
-      <div
-        ref={answerRef}
-        className="overflow-hidden"
-        style={{ maxHeight: 0, opacity: 0 }}
-      >
-        <div ref={contentRef} className="pb-6">
+      <div className={`faq-answer ${isOpen ? "is-open" : ""}`}>
+        <div className="pb-6">
           <p className="text-[15px] text-k-text-secondary leading-[1.7] font-sans">
             {answer}
           </p>
@@ -102,52 +71,10 @@ function FAQItem({
 }
 
 export default function FAQSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const headingRef = useRef<HTMLHeadingElement>(null);
-  const listRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRevealOnScroll<HTMLElement>();
+  const headingRef = useRevealOnScroll<HTMLHeadingElement>();
+  const listRef = useRevealOnScroll<HTMLDivElement>();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (!sectionRef.current) return;
-
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        headingRef.current,
-        { y: 40, opacity: 0 },
-        {
-          y: 0,
-          opacity: 1,
-          duration: 1.0,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: headingRef.current,
-            start: "top 85%",
-          },
-        },
-      );
-
-      if (listRef.current) {
-        const items = listRef.current.children;
-        gsap.fromTo(
-          items,
-          { y: 20, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            duration: 0.7,
-            stagger: 0.08,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: listRef.current,
-              start: "top 85%",
-            },
-          },
-        );
-      }
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
 
   const handleToggle = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
@@ -163,15 +90,18 @@ export default function FAQSection() {
         {/* Heading */}
         <h2
           ref={headingRef}
-          className="text-4xl md:text-5xl lg:text-[56px] font-normal leading-[1.1] tracking-tight text-k-text text-center opacity-0"
+          className="reveal-on-scroll text-4xl md:text-5xl lg:text-[56px] font-normal leading-[1.1] tracking-tight text-k-text text-center"
         >
           Preguntas <span className="font-serif italic">frecuentes</span>
         </h2>
 
         {/* FAQ List */}
-        <div ref={listRef} className="mt-16 md:mt-20 max-w-[720px] mx-auto">
+        <div
+          ref={listRef}
+          className="reveal-on-scroll mt-16 md:mt-20 max-w-[720px] mx-auto"
+        >
           {faqs.map((faq, i) => (
-            <div key={i} className="opacity-0">
+            <div key={i}>
               <FAQItem
                 question={faq.question}
                 answer={faq.answer}
