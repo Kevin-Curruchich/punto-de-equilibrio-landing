@@ -52,62 +52,351 @@
   }
 }
 
+:root {
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-sine: cubic-bezier(0.37, 0, 0.63, 1);
+}
+
+/* ---------- Scroll reveals ---------- */
+
 .reveal-on-scroll {
   opacity: 0;
-  transform: translateY(32px);
+  transform: translate3d(0, 36px, 0);
   transition:
-    opacity 700ms ease,
-    transform 700ms ease;
+    opacity 900ms var(--ease-soft),
+    transform 1100ms var(--ease-out-expo),
+    filter 900ms var(--ease-soft);
+}
+
+.reveal-on-scroll[data-reveal="blur"] {
+  filter: blur(10px);
+  transform: translate3d(0, 24px, 0) scale(0.98);
+}
+
+.reveal-on-scroll[data-reveal="scale"] {
+  transform: scale(0.94);
 }
 
 .reveal-on-scroll.is-visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
+  filter: none;
+}
+
+/* Parent only triggers; each child animates in with its own delay. */
+.reveal-stagger {
+  opacity: 1;
+  transform: none;
 }
 
 .reveal-stagger > * {
-  transition-delay: calc(var(--reveal-index, 0) * 100ms);
+  opacity: 0;
+  transform: translate3d(0, 48px, 0) scale(0.97);
+  transition:
+    opacity 800ms var(--ease-soft),
+    transform 1100ms var(--ease-out-expo);
+  transition-delay: calc(var(--reveal-index, 0) * 130ms + 120ms);
 }
 
+.reveal-stagger.is-visible > *,
+.is-visible .reveal-stagger > * {
+  opacity: 1;
+  transform: none;
+}
+
+/* Masked words that rise into place (SplitText). */
+.split-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding: 0 0.06em 0.14em;
+  margin: 0 -0.06em -0.14em;
+}
+
+.split-word > span {
+  display: inline-block;
+  transform: translate3d(0, 115%, 0) rotate(5deg);
+  transform-origin: left bottom;
+  transition: transform 1200ms var(--ease-out-expo);
+  transition-delay: calc(
+    var(--word-index, 0) * 75ms + var(--split-delay, 0ms)
+  );
+}
+
+.is-visible .split-word > span {
+  transform: none;
+}
+
+/* ---------- Hero ---------- */
+
 .hero-reveal {
-  animation: hero-reveal 800ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: hero-reveal 1000ms var(--ease-out-expo) both;
 }
 
 .hero-reveal-delay-1 {
-  animation-delay: 160ms;
+  animation-delay: 420ms;
 }
 
 .hero-reveal-delay-2 {
-  animation-delay: 320ms;
+  animation-delay: 620ms;
 }
 
 .hero-reveal-delay-3 {
-  animation-delay: 480ms;
+  animation-delay: 820ms;
+}
+
+/* Scroll-linked exit: content drifts down and fades as the hero leaves. */
+.hero-content {
+  transform: translate3d(0, calc(var(--hero-progress, 0) * 120px), 0)
+    scale(calc(1 - var(--hero-progress, 0) * 0.06));
+  opacity: calc(1 - var(--hero-progress, 0) * 1.4);
+  will-change: transform, opacity;
+}
+
+/* Pointer parallax layers; depth set per layer with --depth (px). */
+.parallax-layer {
+  transform: translate3d(
+    calc(var(--mx, 0) * var(--depth, 20px)),
+    calc(var(--my, 0) * var(--depth, 20px) + var(--hero-progress, 0) * var(--scroll-depth, 0px)),
+    0
+  );
+  will-change: transform;
 }
 
 .hero-float {
-  animation: hero-float 3.5s ease-in-out infinite alternate;
+  animation: hero-float 5s var(--ease-in-out-sine) infinite alternate;
 }
 
 .hero-float-delay {
-  animation-delay: 350ms;
+  animation-delay: -2.2s;
 }
 
 .hero-blob {
-  animation: hero-blob 8s ease-in-out infinite alternate;
+  animation: hero-blob 14s var(--ease-in-out-sine) infinite alternate;
 }
 
 .hero-blob-delay-1 {
-  animation-delay: 800ms;
+  animation-delay: -4s;
 }
 
 .hero-blob-delay-2 {
-  animation-delay: 1600ms;
+  animation-delay: -8s;
 }
 
-.testimonial-swap {
-  animation: testimonial-swap 450ms ease both;
+.hero-chip-in {
+  animation: chip-in 1100ms var(--ease-out-expo) both;
 }
+
+/* SVG strokes that draw themselves (use pathLength="1"). */
+.draw-path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw-path 2.4s var(--ease-soft) forwards;
+  animation-delay: var(--draw-delay, 0ms);
+}
+
+.is-visible .draw-on-visible,
+.draw-on-visible.is-visible {
+  animation: draw-path 1.8s var(--ease-soft) forwards;
+  animation-delay: var(--draw-delay, 0ms);
+}
+
+.draw-on-visible {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+/* A soft pulse of light travelling along a line, like a nerve signal. */
+.flow-pulse {
+  stroke-dasharray: 0.12 0.88;
+  stroke-dashoffset: 1;
+  animation: flow-pulse 7s linear infinite;
+  animation-delay: var(--flow-delay, 0ms);
+}
+
+/* Organic "breathing" wave under the headline accent word. */
+.accent-underline {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw-path 1.2s var(--ease-soft) 1.1s forwards;
+}
+
+.scroll-cue-dot {
+  animation: scroll-cue 2.2s var(--ease-soft) infinite;
+}
+
+/* ---------- Navigation ---------- */
+
+.nav-progress {
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+/* ---------- Journey (stats) ---------- */
+
+.pulse-ring {
+  animation: pulse-ring 3.6s var(--ease-soft) infinite;
+  animation-delay: var(--pulse-delay, 0ms);
+}
+
+.journey-icon {
+  transition:
+    transform 500ms var(--ease-out-expo),
+    background-color 400ms ease,
+    color 400ms ease;
+}
+
+.group:hover .journey-icon {
+  transform: translateY(-6px) rotate(-6deg) scale(1.06);
+}
+
+/* ---------- Marquee ---------- */
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 38s linear infinite;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+.marquee-group {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  padding-right: 2.5rem;
+}
+
+@media (min-width: 768px) {
+  .marquee-group {
+    gap: 3.5rem;
+    padding-right: 3.5rem;
+  }
+}
+
+.marquee-outline {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(43, 77, 99, 0.45);
+  font-weight: 300;
+}
+
+.marquee-dot {
+  animation: spin-slow 12s linear infinite;
+}
+
+/* ---------- Tilt cards ---------- */
+
+.tilt-card {
+  --rx: 0deg;
+  --ry: 0deg;
+  transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry));
+  transition:
+    transform 500ms var(--ease-out-expo),
+    box-shadow 500ms ease,
+    border-color 400ms ease;
+  transform-style: preserve-3d;
+}
+
+.tilt-card:hover {
+  transition:
+    transform 120ms linear,
+    box-shadow 500ms ease,
+    border-color 400ms ease;
+}
+
+.tilt-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    320px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+    rgba(99, 178, 163, 0.16),
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity 400ms ease;
+  pointer-events: none;
+}
+
+.tilt-card:hover::before {
+  opacity: 1;
+}
+
+.tilt-card-number {
+  transition:
+    transform 600ms var(--ease-out-expo),
+    color 400ms ease;
+  transform-origin: left bottom;
+}
+
+.tilt-card:hover .tilt-card-number {
+  transform: translate3d(0, -4px, 30px) scale(1.08);
+  color: #35769b;
+}
+
+.autoplay-bar {
+  transform-origin: left center;
+  animation: autoplay-fill var(--autoplay-duration, 4500ms) linear forwards;
+}
+
+.is-paused .autoplay-bar {
+  animation-play-state: paused;
+}
+
+/* ---------- Testimonials ---------- */
+
+.testimonial-swap {
+  animation: testimonial-in 700ms var(--ease-out-expo) both;
+}
+
+.testimonial-swap[data-direction="prev"] {
+  animation-name: testimonial-in-prev;
+}
+
+.quote-mark {
+  animation: quote-pop 900ms var(--ease-out-expo) both;
+}
+
+.testimonial-avatar {
+  animation: avatar-in 800ms var(--ease-out-expo) 150ms both;
+}
+
+/* ---------- Buttons ---------- */
+
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.btn-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+  transition: transform 900ms var(--ease-soft);
+}
+
+.btn-shine:hover::after {
+  transform: translateX(120%);
+}
+
+.magnetic {
+  transition: transform 450ms var(--ease-out-expo);
+}
+
+/* ---------- FAQ ---------- */
 
 .faq-answer {
   display: grid;
@@ -115,8 +404,8 @@
   opacity: 0;
   overflow: hidden;
   transition:
-    grid-template-rows 400ms ease,
-    opacity 300ms ease;
+    grid-template-rows 500ms var(--ease-out-expo),
+    opacity 350ms ease;
 }
 
 .faq-answer.is-open {
@@ -129,59 +418,238 @@
   overflow: hidden;
 }
 
+.faq-answer > div > p {
+  transform: translate3d(0, -8px, 0);
+  transition: transform 500ms var(--ease-out-expo);
+}
+
+.faq-answer.is-open > div > p {
+  transform: none;
+}
+
+.faq-row {
+  position: relative;
+}
+
+.faq-row::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  height: 1px;
+  width: 100%;
+  background: #35769b;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 700ms var(--ease-out-expo);
+}
+
+.faq-row:hover::after,
+.faq-row.is-open::after {
+  transform: scaleX(1);
+}
+
+/* ---------- Keyframes ---------- */
+
 @keyframes hero-reveal {
   from {
     opacity: 0;
-    transform: translateY(40px);
+    transform: translate3d(0, 40px, 0);
+    filter: blur(8px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: none;
+    filter: none;
+  }
+}
+
+@keyframes chip-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 
 @keyframes hero-float {
   from {
-    transform: translateY(-12px);
+    transform: translate3d(0, -10px, 0) rotate(-1.5deg);
   }
   to {
-    transform: translateY(12px);
+    transform: translate3d(0, 10px, 0) rotate(1.5deg);
   }
 }
 
 @keyframes hero-blob {
-  from {
-    transform: translate(-20px, -18px);
+  0% {
+    transform: translate3d(-24px, -18px, 0) scale(1);
+    border-radius: 42% 58% 62% 38% / 45% 42% 58% 55%;
   }
-  to {
-    transform: translate(20px, 18px);
+  50% {
+    transform: translate3d(12px, 20px, 0) scale(1.08);
+    border-radius: 58% 42% 38% 62% / 55% 60% 40% 45%;
+  }
+  100% {
+    transform: translate3d(24px, -6px, 0) scale(0.96);
+    border-radius: 50% 50% 55% 45% / 40% 55% 45% 60%;
   }
 }
 
-@keyframes testimonial-swap {
+@keyframes draw-path {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes flow-pulse {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: -1;
+  }
+}
+
+@keyframes scroll-cue {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -4px, 0);
+  }
+  30% {
+    opacity: 1;
+  }
+  80%,
+  100% {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    opacity: 0.55;
+    transform: scale(0.9);
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(1.7);
+  }
+}
+
+@keyframes marquee {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes autoplay-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes testimonial-in {
   from {
     opacity: 0;
-    transform: translateX(20px);
+    transform: translate3d(40px, 0, 0);
+    filter: blur(6px);
   }
   to {
     opacity: 1;
-    transform: translateX(0);
+    transform: none;
+    filter: none;
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .reveal-on-scroll,
-  .hero-reveal,
-  .hero-float,
-  .hero-blob,
-  .testimonial-swap {
-    animation: none;
+@keyframes testimonial-in-prev {
+  from {
+    opacity: 0;
+    transform: translate3d(-40px, 0, 0);
+    filter: blur(6px);
+  }
+  to {
     opacity: 1;
     transform: none;
-    transition: none;
+    filter: none;
+  }
+}
+
+@keyframes quote-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.4) rotate(-20deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes avatar-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---------- Reduced motion: show the final, readable state ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 1ms !important;
+    transition-delay: 0ms !important;
   }
 
-  .faq-answer {
-    transition: none;
+  .reveal-on-scroll,
+  .reveal-stagger > *,
+  .split-word > span,
+  .hero-content,
+  .parallax-layer {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+  .draw-path,
+  .draw-on-visible,
+  .accent-underline {
+    stroke-dashoffset: 0;
+  }
+
+  .flow-pulse,
+  .pulse-ring,
+  .scroll-cue-dot {
+    display: none;
+  }
+
+  .marquee-track {
+    animation: none;
+  }
+
+  .marquee-group[aria-hidden="true"] {
+    display: none;
   }
 }

@@ -1,5 +1,7 @@
-import { useRef, useState } from "react";
+import { useState, type CSSProperties } from "react";
 import useRevealOnScroll from "@/hooks/useRevealOnScroll";
+import SplitText from "@/components/motion/SplitText";
+import { useMagnetic, usePointerParallax } from "@/hooks/useMotion";
 import { Instagram, Facebook } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import GoogleCalendarBookingDialog from "@/components/GoogleCalendarBookingDialog";
@@ -14,7 +16,10 @@ const footerServices = [
 ];
 
 export default function CTAFooter() {
-  const ctaRef = useRef<HTMLElement>(null);
+  const ctaRef = usePointerParallax<HTMLElement>();
+  const wavesRef = useRevealOnScroll<HTMLDivElement>();
+  const buttonRef = useMagnetic<HTMLDivElement>(0.3);
+  const footerRef = useRevealOnScroll<HTMLDivElement>();
   const headingRef = useRevealOnScroll<HTMLHeadingElement>();
   const ctaContentRef = useRevealOnScroll<HTMLDivElement>();
   const [isBookingOpen, setIsBookingOpen] = useState(false);
@@ -25,15 +30,75 @@ export default function CTAFooter() {
       <section
         id="cta"
         ref={ctaRef}
-        className="bg-cream py-32 md:py-40 lg:py-[160px]"
+        className="relative overflow-hidden bg-cream py-32 md:py-40 lg:py-[160px]"
       >
-        <div className="max-w-[800px] mx-auto px-6 text-center">
+        <div
+          ref={wavesRef}
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0"
+        >
+          <div
+            className="parallax-layer absolute -left-24 top-1/4"
+            style={{ "--depth": "-36px" } as CSSProperties}
+          >
+            <div className="hero-blob h-80 w-80 rounded-full bg-[#dfeef3] blur-3xl opacity-80" />
+          </div>
+          <div
+            className="parallax-layer absolute -right-20 bottom-0"
+            style={{ "--depth": "44px" } as CSSProperties}
+          >
+            <div className="hero-blob hero-blob-delay-1 h-96 w-96 rounded-full bg-[#f3e7dc] blur-3xl opacity-80" />
+          </div>
+          <svg
+            className="absolute inset-0 h-full w-full"
+            viewBox="0 0 1440 700"
+            preserveAspectRatio="xMidYMid slice"
+          >
+            {[
+              "M-40 520C160 460 280 600 460 560C640 520 700 400 900 420C1100 440 1200 560 1480 500",
+              "M-40 580C200 540 300 660 520 620C720 584 780 480 980 500C1160 518 1260 610 1480 580",
+            ].map((d, index) => (
+              <g key={d}>
+                <path
+                  d={d}
+                  pathLength={1}
+                  fill="none"
+                  stroke="rgba(81,126,150,0.2)"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  className="draw-on-visible"
+                  style={
+                    { "--draw-delay": `${index * 250}ms` } as CSSProperties
+                  }
+                />
+                <path
+                  d={d}
+                  pathLength={1}
+                  fill="none"
+                  stroke="rgba(99,178,163,0.6)"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  className="flow-pulse"
+                  style={
+                    { "--flow-delay": `${2000 + index * 2500}ms` } as CSSProperties
+                  }
+                />
+              </g>
+            ))}
+          </svg>
+        </div>
+
+        <div className="relative max-w-[800px] mx-auto px-6 text-center">
           <h2
             ref={headingRef}
-            className="reveal-on-scroll text-4xl md:text-5xl lg:text-7xl font-normal leading-[1.05] tracking-tight text-k-text"
+            className="text-4xl md:text-5xl lg:text-7xl font-normal leading-[1.05] tracking-tight text-k-text"
           >
-            Empieza tu{" "}
-            <span className="font-serif italic">recuperación hoy</span>
+            <SplitText text="Empieza tu" />{" "}
+            <SplitText
+              text="recuperación hoy"
+              startIndex={2}
+              className="font-serif italic"
+            />
           </h2>
 
           <div ref={ctaContentRef} className="reveal-on-scroll mt-6">
@@ -42,16 +107,18 @@ export default function CTAFooter() {
               sin dolor.
             </p>
 
-            <Button
-              size="lg"
-              onClick={() => {
-                void trackEvent("booking_open", { location: "footer" });
-                setIsBookingOpen(true);
-              }}
-              className="mx-auto mt-12 w-full max-w-[320px] bg-k-primary px-6 py-5 text-sm font-medium text-white hover:bg-k-green-dark hover:scale-[1.03] hover:shadow-cta transition-all duration-300 tracking-[0.05em] uppercase"
-            >
-              AGENDAR EVALUACIÓN
-            </Button>
+            <div ref={buttonRef} className="magnetic mx-auto mt-12 max-w-[320px]">
+              <Button
+                size="lg"
+                onClick={() => {
+                  void trackEvent("booking_open", { location: "footer" });
+                  setIsBookingOpen(true);
+                }}
+                className="btn-shine w-full bg-k-primary px-6 py-5 text-sm font-medium text-white hover:bg-k-green-dark hover:shadow-cta transition-all duration-300 tracking-[0.05em] uppercase"
+              >
+                AGENDAR EVALUACIÓN
+              </Button>
+            </div>
 
             <p className="mt-5 text-[13px] text-k-text-muted font-sans">
               Atención personalizada en la comodidad de tu hogar
@@ -69,9 +136,12 @@ export default function CTAFooter() {
       <footer className="bg-k-green-dark text-white">
         <div className="max-w-[1200px] mx-auto px-6 pt-16 md:pt-20 pb-10">
           {/* Footer Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8">
+          <div
+            ref={footerRef}
+            className="reveal-stagger grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-8"
+          >
             {/* Brand */}
-            <div>
+            <div style={{ "--reveal-index": 0 } as CSSProperties}>
               <h3 className="font-serif text-2xl font-normal text-white">
                 <span className="font-poppins not-italic">Punto de </span>
                 <span className="italic">Equilibrio</span>
@@ -82,7 +152,7 @@ export default function CTAFooter() {
             </div>
 
             {/* Services */}
-            <div>
+            <div style={{ "--reveal-index": 1 } as CSSProperties}>
               <h4 className="text-[11px] font-medium text-white/40 uppercase tracking-[0.1em] font-sans mb-5">
                 SERVICIOS
               </h4>
@@ -98,7 +168,7 @@ export default function CTAFooter() {
             </div>
 
             {/* Contact */}
-            <div>
+            <div style={{ "--reveal-index": 2 } as CSSProperties}>
               <h4 className="text-[11px] font-medium text-white/40 uppercase tracking-[0.1em] font-sans mb-5">
                 CONTACTO
               </h4>
@@ -124,7 +194,7 @@ export default function CTAFooter() {
             </div>
 
             {/* Social */}
-            <div>
+            <div style={{ "--reveal-index": 3 } as CSSProperties}>
               <h4 className="text-[11px] font-medium text-white/40 uppercase tracking-[0.1em] font-sans mb-5">
                 SÍGUENOS
               </h4>
