@@ -3,6 +3,8 @@ import GoogleCalendarBookingDialog from "@/components/GoogleCalendarBookingDialo
 import SplitText from "@/components/motion/SplitText";
 import { trackEvent } from "@/lib/firebase";
 import {
+  mergeRefs,
+  useInViewAnimations,
   useMagnetic,
   usePointerParallax,
   useScrollProgress,
@@ -65,9 +67,10 @@ export default function HeroSection() {
   const [isReady, setIsReady] = useState(false);
   const sectionRef = useScrollProgress<HTMLElement>("--hero-progress");
   const stageRef = usePointerParallax<HTMLDivElement>();
+  const animationsRef = useInViewAnimations<HTMLDivElement>();
   const ctaRef = useMagnetic<HTMLDivElement>(0.25);
   const chipClass =
-    "inline-flex items-center gap-2 rounded-full border border-k-line bg-white/70 px-4 py-2 text-sm font-medium text-k-text shadow-sm backdrop-blur-sm";
+    "inline-flex items-center gap-2 rounded-full border border-k-line bg-white/90 px-4 py-2 text-sm font-medium text-k-text shadow-sm";
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => setIsReady(true));
@@ -85,7 +88,7 @@ export default function HeroSection() {
       className="relative min-h-[100dvh] overflow-hidden"
     >
       <div
-        ref={stageRef}
+        ref={mergeRefs(stageRef, animationsRef)}
         className="relative flex min-h-[100dvh] flex-col items-center justify-center"
       >
         <div
@@ -97,28 +100,43 @@ export default function HeroSection() {
           }}
         >
           <div
-            className="parallax-layer absolute -left-10 top-14"
+            className="parallax-layer absolute -left-28 -top-2"
             style={
               { "--depth": "-40px", "--scroll-depth": "160px" } as CSSProperties
             }
           >
-            <div className="hero-blob h-[22rem] w-[22rem] rounded-full bg-[#dfeef3]/80 blur-3xl opacity-90" />
+            <div
+              className="hero-blob soft-blob h-[30rem] w-[30rem]"
+              style={
+                { "--blob-color": "rgba(223, 238, 243, 0.85)" } as CSSProperties
+              }
+            />
           </div>
           <div
-            className="parallax-layer absolute -right-8 top-10"
+            className="parallax-layer absolute -right-24 -top-6"
             style={
               { "--depth": "50px", "--scroll-depth": "240px" } as CSSProperties
             }
           >
-            <div className="hero-blob hero-blob-delay-1 h-[24rem] w-[24rem] rounded-full bg-[#cfe1e7]/80 blur-3xl opacity-80" />
+            <div
+              className="hero-blob hero-blob-delay-1 soft-blob h-[32rem] w-[32rem]"
+              style={
+                { "--blob-color": "rgba(207, 225, 231, 0.75)" } as CSSProperties
+              }
+            />
           </div>
           <div
-            className="parallax-layer absolute bottom-[-3rem] left-[18%]"
+            className="parallax-layer absolute bottom-[-7rem] left-[14%]"
             style={
               { "--depth": "-30px", "--scroll-depth": "80px" } as CSSProperties
             }
           >
-            <div className="hero-blob hero-blob-delay-2 h-[18rem] w-[18rem] rounded-full bg-[#f3e7dc]/90 blur-3xl opacity-70" />
+            <div
+              className="hero-blob hero-blob-delay-2 soft-blob h-[26rem] w-[26rem]"
+              style={
+                { "--blob-color": "rgba(243, 231, 220, 0.8)" } as CSSProperties
+              }
+            />
           </div>
           <div
             className="absolute inset-0 opacity-25"
@@ -138,7 +156,7 @@ export default function HeroSection() {
             }
           >
             <svg
-              className="h-full w-full opacity-70"
+              className="wave-sway h-full w-full opacity-70"
               viewBox="0 0 1440 900"
               preserveAspectRatio="xMidYMid slice"
               aria-hidden="true"
@@ -155,20 +173,6 @@ export default function HeroSection() {
                     className="draw-path"
                     style={
                       { "--draw-delay": `${index * 180}ms` } as CSSProperties
-                    }
-                  />
-                  <path
-                    d={path.d}
-                    pathLength={1}
-                    fill="none"
-                    stroke="rgba(99, 178, 163, 0.55)"
-                    strokeWidth={path.width + 1}
-                    strokeLinecap="round"
-                    className="flow-pulse"
-                    style={
-                      {
-                        "--flow-delay": `${2400 + index * 1600}ms`,
-                      } as CSSProperties
                     }
                   />
                 </g>

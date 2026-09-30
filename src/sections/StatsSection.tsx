@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import useRevealOnScroll from "@/hooks/useRevealOnScroll";
 import SplitText from "@/components/motion/SplitText";
+import { useInViewAnimations } from "@/hooks/useMotion";
 import { ClipboardCheck, HeartPulse, Home } from "lucide-react";
 
 const differentiators = [
@@ -25,11 +26,16 @@ const differentiators = [
 ];
 
 export default function StatsSection() {
+  const sectionRef = useInViewAnimations<HTMLElement>();
   const headingRef = useRevealOnScroll<HTMLHeadingElement>();
   const diffRef = useRevealOnScroll<HTMLDivElement>();
 
   return (
-    <section id="stats" className="bg-cream py-24 md:py-32 lg:py-[120px]">
+    <section
+      id="stats"
+      ref={sectionRef}
+      className="bg-cream py-24 md:py-32 lg:py-[120px]"
+    >
       <div className="max-w-[1200px] mx-auto px-6">
         {/* Heading */}
         <h2
@@ -73,9 +79,7 @@ export default function StatsSection() {
             />
           </svg>
 
-          <div
-            className="reveal-stagger grid grid-cols-1 md:grid-cols-3 gap-12"
-          >
+          <div className="reveal-stagger grid grid-cols-1 md:grid-cols-3 gap-12">
             {differentiators.map((item, index) => (
               <div
                 key={item.title}

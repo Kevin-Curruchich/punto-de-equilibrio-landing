@@ -172,8 +172,11 @@
   animation-delay: -2.2s;
 }
 
+/* Transform-only so the blurred blob is rasterized once and just moved on
+   the compositor; animating its shape forced a full blur repaint per frame. */
 .hero-blob {
   animation: hero-blob 14s var(--ease-in-out-sine) infinite alternate;
+  will-change: transform;
 }
 
 .hero-blob-delay-1 {
@@ -207,12 +210,24 @@
   stroke-dashoffset: 1;
 }
 
-/* A soft pulse of light travelling along a line, like a nerve signal. */
-.flow-pulse {
-  stroke-dasharray: 0.12 0.88;
-  stroke-dashoffset: 1;
-  animation: flow-pulse 7s linear infinite;
-  animation-delay: var(--flow-delay, 0ms);
+/* Soft glow without a CSS filter: a radial gradient costs nothing to move,
+   while blur() on a large layer re-rasterizes on every frame. */
+.soft-blob {
+  border-radius: 9999px;
+  background: radial-gradient(
+    closest-side,
+    var(--blob-color) 0%,
+    var(--blob-color) 35%,
+    transparent 100%
+  );
+}
+
+/* Waves gently sway after drawing in. Transform-only, so it stays on the
+   compositor instead of repainting the SVG each frame. */
+.wave-sway {
+  animation: wave-sway 11s var(--ease-in-out-sine) 2.4s infinite alternate;
+  transform-origin: center;
+  will-change: transform;
 }
 
 /* Organic "breathing" wave under the headline accent word. */
@@ -498,15 +513,12 @@
 @keyframes hero-blob {
   0% {
     transform: translate3d(-24px, -18px, 0) scale(1);
-    border-radius: 42% 58% 62% 38% / 45% 42% 58% 55%;
   }
   50% {
     transform: translate3d(12px, 20px, 0) scale(1.08);
-    border-radius: 58% 42% 38% 62% / 55% 60% 40% 45%;
   }
   100% {
     transform: translate3d(24px, -6px, 0) scale(0.96);
-    border-radius: 50% 50% 55% 45% / 40% 55% 45% 60%;
   }
 }
 
@@ -516,12 +528,12 @@
   }
 }
 
-@keyframes flow-pulse {
+@keyframes wave-sway {
   from {
-    stroke-dashoffset: 1;
+    transform: translate3d(-18px, 0, 0) scaleY(0.96);
   }
   to {
-    stroke-dashoffset: -1;
+    transform: translate3d(18px, 6px, 0) scaleY(1.05);
   }
 }
 
@@ -621,6 +633,16 @@
   }
 }
 
+/* ---------- Off-screen sections ---------- */
+
+/* Looping animations only run while their section is on screen
+   (see useInViewAnimations). */
+[data-offscreen] *,
+[data-offscreen] *::before,
+[data-offscreen] *::after {
+  animation-play-state: paused !important;
+}
+
 /* ---------- Reduced motion: show the final, readable state ---------- */
 
 @media (prefers-reduced-motion: reduce) {
@@ -650,7 +672,6 @@
     stroke-dashoffset: 0;
   }
 
-  .flow-pulse,
   .pulse-ring,
   .scroll-cue-dot {
     display: none;

@@ -1,7 +1,11 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import useRevealOnScroll from "@/hooks/useRevealOnScroll";
 import SplitText from "@/components/motion/SplitText";
-import { prefersReducedMotion, useTilt } from "@/hooks/useMotion";
+import {
+  prefersReducedMotion,
+  useInViewAnimations,
+  useTilt,
+} from "@/hooks/useMotion";
 import { ArrowRight } from "lucide-react";
 import {
   type CarouselApi,
@@ -96,10 +100,7 @@ function ServicesMarquee() {
   const revealRef = useRevealOnScroll<HTMLDivElement>();
 
   const renderGroup = (hidden: boolean) => (
-    <ul
-      className="flex shrink-0 gap-5 pr-5"
-      aria-hidden={hidden || undefined}
-    >
+    <ul className="flex shrink-0 gap-5 pr-5" aria-hidden={hidden || undefined}>
       {services.map((service) => (
         <li key={service.number} className="w-[360px] shrink-0">
           <ServiceCard service={service} />
@@ -241,12 +242,14 @@ function ServicesCarousel() {
 
 export default function ServicesSection() {
   const headingRef = useRevealOnScroll<HTMLDivElement>();
+  const sectionRef = useInViewAnimations<HTMLElement>();
   const isDesktop = useMediaQuery(DESKTOP_QUERY);
   const [reducedMotion] = useState(prefersReducedMotion);
 
   return (
     <section
       id="servicios"
+      ref={sectionRef}
       className="overflow-hidden bg-white py-24 md:py-32 lg:py-[120px]"
     >
       <div className="max-w-[1200px] mx-auto px-6">

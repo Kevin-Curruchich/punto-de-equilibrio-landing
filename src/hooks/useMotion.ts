@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 
 export function prefersReducedMotion() {
   return (
@@ -234,4 +234,41 @@ export function useMagnetic<T extends HTMLElement>(strength = 0.3) {
   }, [strength]);
 
   return ref;
+}
+
+/**
+ * Marks the element with `data-offscreen` while it is out of the viewport,
+ * which pauses every CSS animation inside it (see index.css). Keeps looping
+ * effects from costing frames in sections nobody is looking at.
+ */
+export function useInViewAnimations<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          element.removeAttribute("data-offscreen");
+        } else {
+          element.setAttribute("data-offscreen", "");
+        }
+      },
+      { rootMargin: "100px 0px" },
+    );
+
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
+  return ref;
+}
+
+/** Combines several refs so one element can feed more than one hook. */
+export function mergeRefs<T>(...refs: Array<RefObject<T | null>>) {
+  return (node: T | null) => {
+    for (const ref of refs) ref.current = node;
+  };
 }
