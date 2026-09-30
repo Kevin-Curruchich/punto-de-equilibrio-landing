@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import useRevealOnScroll from "@/hooks/useRevealOnScroll";
 import { Button } from "@/components/ui/button";
+import SplitText from "@/components/motion/SplitText";
 
 const faqs = [
   {
@@ -42,18 +43,20 @@ function FAQItem({
   onToggle: () => void;
 }) {
   return (
-    <div className="border-b border-k-line">
+    <div className={`faq-row border-b border-k-line ${isOpen ? "is-open" : ""}`}>
       <Button
         variant="ghost"
         onClick={onToggle}
         className="group h-auto w-full justify-between rounded-full px-0 py-6 text-left whitespace-normal hover:bg-transparent hover:text-inherit"
       >
-        <span className="text-base font-medium text-k-text font-sans pr-8">
+        <span className="text-base font-medium text-k-text font-sans pr-8 transition-transform duration-500 group-hover:translate-x-2">
           {question}
         </span>
         <span
-          className={`text-k-primary text-xl font-light flex-shrink-0 transition-transform duration-300 ${
-            isOpen ? "rotate-45" : "rotate-0"
+          className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border text-xl font-light transition-all duration-500 ${
+            isOpen
+              ? "rotate-[135deg] border-k-primary bg-k-primary text-white"
+              : "rotate-0 border-k-line text-k-primary group-hover:border-k-primary"
           }`}
         >
           +
@@ -71,7 +74,6 @@ function FAQItem({
 }
 
 export default function FAQSection() {
-  const sectionRef = useRevealOnScroll<HTMLElement>();
   const headingRef = useRevealOnScroll<HTMLHeadingElement>();
   const listRef = useRevealOnScroll<HTMLDivElement>();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -83,25 +85,32 @@ export default function FAQSection() {
   return (
     <section
       id="faq"
-      ref={sectionRef}
       className="bg-white py-24 md:py-32 lg:py-[120px]"
     >
       <div className="max-w-[800px] mx-auto px-6">
         {/* Heading */}
         <h2
           ref={headingRef}
-          className="reveal-on-scroll text-4xl md:text-5xl lg:text-[56px] font-normal leading-[1.1] tracking-tight text-k-text text-center"
+          className="text-4xl md:text-5xl lg:text-[56px] font-normal leading-[1.1] tracking-tight text-k-text text-center"
         >
-          Preguntas <span className="font-serif italic">frecuentes</span>
+          <SplitText text="Preguntas" />{" "}
+          <SplitText
+            text="frecuentes"
+            startIndex={1}
+            className="font-serif italic"
+          />
         </h2>
 
         {/* FAQ List */}
         <div
           ref={listRef}
-          className="reveal-on-scroll mt-16 md:mt-20 max-w-[720px] mx-auto"
+          className="reveal-stagger mt-16 md:mt-20 max-w-[720px] mx-auto"
         >
           {faqs.map((faq, i) => (
-            <div key={i}>
+            <div
+              key={faq.question}
+              style={{ "--reveal-index": i } as CSSProperties}
+            >
               <FAQItem
                 question={faq.question}
                 answer={faq.answer}

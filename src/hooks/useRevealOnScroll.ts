@@ -11,7 +11,9 @@ export default function useRevealOnScroll<T extends HTMLElement>() {
       ([entry]) => {
         if (!entry?.isIntersecting) return;
 
-        element.classList.add("is-visible");
+        // An attribute (not a class) so React re-rendering className on the
+        // same element never wipes the revealed state.
+        element.setAttribute("data-revealed", "");
         observer.disconnect();
       },
       { threshold: 0.15 },

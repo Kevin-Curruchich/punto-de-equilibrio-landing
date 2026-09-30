@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { usePageProgressBar } from "@/hooks/useMotion";
 
 export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const navRef = useRef<HTMLElement>(null);
+  const progressRef = usePageProgressBar<HTMLDivElement>();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -76,6 +78,17 @@ export default function Navigation() {
             Equilibrio.
           </span>
         </Button>
+      </div>
+      <div
+        aria-hidden="true"
+        className={`absolute inset-x-0 bottom-0 h-[2px] transition-opacity duration-500 ${
+          scrolled ? "opacity-100" : "opacity-0"
+        }`}
+      >
+        <div
+          ref={progressRef}
+          className="nav-progress h-full w-full bg-gradient-to-r from-k-primary via-k-green-light to-k-primary"
+        />
       </div>
     </nav>
   );

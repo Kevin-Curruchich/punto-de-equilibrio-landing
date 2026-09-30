@@ -1,6 +1,7 @@
 import Navigation from "@/sections/Navigation";
 import HeroSection from "@/sections/HeroSection";
 import StatsSection from "@/sections/StatsSection";
+import Marquee from "@/components/motion/Marquee";
 import ServicesSection from "@/sections/ServicesSection";
 import TestimonialsSection from "@/sections/TestimonialsSection";
 import FAQSection from "@/sections/FAQSection";
@@ -53,6 +54,7 @@ export default function App() {
       <main>
         <HeroSection />
         <StatsSection />
+        <Marquee />
         <ServicesSection />
         <TestimonialsSection />
         <FAQSection />
