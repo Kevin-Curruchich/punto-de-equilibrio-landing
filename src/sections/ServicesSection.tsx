@@ -2,7 +2,8 @@ import { useEffect, useState, type CSSProperties } from "react";
 import useRevealOnScroll from "@/hooks/useRevealOnScroll";
 import SplitText from "@/components/motion/SplitText";
 import { prefersReducedMotion, useTilt } from "@/hooks/useMotion";
-import { ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   type CarouselApi,
   Carousel,
@@ -44,6 +45,7 @@ const services = [
 ];
 
 const AUTOPLAY_MS = 4500;
+const DESKTOP_QUERY = "(min-width: 1024px)";
 
 function ServiceCard({ service }: { service: (typeof services)[number] }) {
   const tiltRef = useTilt<HTMLDivElement>(7);
@@ -79,7 +81,19 @@ export default function ServicesSection() {
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [canAutoplay] = useState(() => !prefersReducedMotion());
+  const [isDesktop, setIsDesktop] = useState(
+    () => window.matchMedia(DESKTOP_QUERY).matches,
+  );
+  // Desktop already shows three cards and has pointer controls, so the
+  // carousel only autoplays on smaller screens.
+  const canAutoplay = !isDesktop && !prefersReducedMotion();
+
+  useEffect(() => {
+    const query = window.matchMedia(DESKTOP_QUERY);
+    const handleChange = () => setIsDesktop(query.matches);
+    query.addEventListener("change", handleChange);
+    return () => query.removeEventListener("change", handleChange);
+  }, []);
 
   useEffect(() => {
     if (!carouselApi) return;
@@ -121,8 +135,16 @@ export default function ServicesSection() {
         <div
           ref={carouselRef}
           className={isPaused ? "is-paused" : undefined}
-          onMouseEnter={() => setIsPaused(true)}
-          onMouseLeave={() => setIsPaused(false)}
+          onPointerEnter={(event) => {
+            if (event.pointerType === "mouse") setIsPaused(true);
+          }}
+          onPointerLeave={(event) => {
+            if (event.pointerType === "mouse") setIsPaused(false);
+          }}
+          // Hold autoplay while a finger is dragging the carousel.
+          onPointerDown={() => setIsPaused(true)}
+          onPointerUp={() => setIsPaused(false)}
+          onPointerCancel={() => setIsPaused(false)}
           onFocus={() => setIsPaused(true)}
           onBlur={() => setIsPaused(false)}
         >
@@ -144,8 +166,18 @@ export default function ServicesSection() {
             </CarouselContent>
           </Carousel>
 
-          {/* Position + autoplay progress */}
+          {/* Position + autoplay progress (mobile) or arrows (desktop) */}
           <div className="mt-10 flex items-center justify-center gap-4 font-sans text-xs text-k-text-muted">
+            {isDesktop && (
+              <Button
+                variant="ghost"
+                onClick={() => carouselApi?.scrollPrev()}
+                className="group mr-2 h-11 w-11 border border-k-line p-0 text-k-text-muted hover:bg-k-primary hover:text-white"
+                aria-label="Servicio anterior"
+              >
+                <ArrowLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-0.5" />
+              </Button>
+            )}
             <span className="tabular-nums text-k-text">
               {String(selectedIndex + 1).padStart(2, "0")}
             </span>
@@ -171,6 +203,16 @@ export default function ServicesSection() {
             <span className="tabular-nums">
               {String(services.length).padStart(2, "0")}
             </span>
+            {isDesktop && (
+              <Button
+                variant="ghost"
+                onClick={() => carouselApi?.scrollNext()}
+                className="group ml-2 h-11 w-11 border border-k-line p-0 text-k-text-muted hover:bg-k-primary hover:text-white"
+                aria-label="Siguiente servicio"
+              >
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
+              </Button>
+            )}
           </div>
         </div>
       </div>

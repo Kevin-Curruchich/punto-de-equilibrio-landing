@@ -166,6 +166,8 @@ export function useTilt<T extends HTMLElement>(maxTilt = 6) {
     let frame = 0;
 
     const handleMove = (event: PointerEvent) => {
+      // Don't tilt while the card is being dragged (e.g. inside a carousel).
+      if (event.buttons !== 0) return;
       if (frame) return;
       frame = requestAnimationFrame(() => {
         frame = 0;
@@ -190,11 +192,13 @@ export function useTilt<T extends HTMLElement>(maxTilt = 6) {
 
     element.addEventListener("pointermove", handleMove, { passive: true });
     element.addEventListener("pointerleave", handleLeave);
+    element.addEventListener("pointerdown", handleLeave);
 
     return () => {
       cancelAnimationFrame(frame);
       element.removeEventListener("pointermove", handleMove);
       element.removeEventListener("pointerleave", handleLeave);
+      element.removeEventListener("pointerdown", handleLeave);
     };
   }, [maxTilt]);
 
