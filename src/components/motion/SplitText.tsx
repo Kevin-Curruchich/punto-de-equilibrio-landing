@@ -9,7 +9,7 @@ type SplitTextProps = {
 
 /**
  * Splits text into masked words that rise into place when an ancestor gets
- * `.is-visible` (see `.split-word` in index.css).
+ * `[data-revealed]` (see `.split-word` in index.css).
  */
 export default function SplitText({
   text,

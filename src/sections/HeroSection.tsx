@@ -193,9 +193,8 @@ export default function HeroSection() {
             </div>
 
             <h1
-              className={`text-5xl sm:text-6xl md:text-7xl lg:text-[6rem] font-normal leading-[1.02] tracking-tight text-k-text ${
-                isReady ? "is-visible" : ""
-              }`}
+              data-revealed={isReady ? "" : undefined}
+              className="text-5xl sm:text-6xl md:text-7xl lg:text-[6rem] font-normal leading-[1.02] tracking-tight text-k-text"
               style={{ "--split-delay": "150ms" } as CSSProperties}
             >
               <span className="block">
