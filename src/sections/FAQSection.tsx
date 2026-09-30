@@ -43,7 +43,9 @@ function FAQItem({
   onToggle: () => void;
 }) {
   return (
-    <div className={`faq-row border-b border-k-line ${isOpen ? "is-open" : ""}`}>
+    <div
+      className={`faq-row border-b border-k-line ${isOpen ? "is-open" : ""}`}
+    >
       <Button
         variant="ghost"
         onClick={onToggle}
@@ -83,10 +85,7 @@ export default function FAQSection() {
   };
 
   return (
-    <section
-      id="faq"
-      className="bg-white py-24 md:py-32 lg:py-[120px]"
-    >
+    <section id="faq" className="bg-white py-24 md:py-32 lg:py-[120px]">
       <div className="max-w-[800px] mx-auto px-6">
         {/* Heading */}
         <h2

@@ -1,7 +1,12 @@
 import { useState, type CSSProperties } from "react";
 import useRevealOnScroll from "@/hooks/useRevealOnScroll";
 import SplitText from "@/components/motion/SplitText";
-import { useMagnetic, usePointerParallax } from "@/hooks/useMotion";
+import {
+  mergeRefs,
+  useInViewAnimations,
+  useMagnetic,
+  usePointerParallax,
+} from "@/hooks/useMotion";
 import { Instagram, Facebook } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import GoogleCalendarBookingDialog from "@/components/GoogleCalendarBookingDialog";
@@ -17,6 +22,7 @@ const footerServices = [
 
 export default function CTAFooter() {
   const ctaRef = usePointerParallax<HTMLElement>();
+  const animationsRef = useInViewAnimations<HTMLElement>();
   const wavesRef = useRevealOnScroll<HTMLDivElement>();
   const buttonRef = useMagnetic<HTMLDivElement>(0.3);
   const footerRef = useRevealOnScroll<HTMLDivElement>();
@@ -29,7 +35,7 @@ export default function CTAFooter() {
       {/* CTA Section */}
       <section
         id="cta"
-        ref={ctaRef}
+        ref={mergeRefs(ctaRef, animationsRef)}
         className="relative overflow-hidden bg-cream py-32 md:py-40 lg:py-[160px]"
       >
         <div
@@ -41,16 +47,26 @@ export default function CTAFooter() {
             className="parallax-layer absolute -left-24 top-1/4"
             style={{ "--depth": "-36px" } as CSSProperties}
           >
-            <div className="hero-blob h-80 w-80 rounded-full bg-[#dfeef3] blur-3xl opacity-80" />
+            <div
+              className="hero-blob soft-blob h-[28rem] w-[28rem]"
+              style={
+                { "--blob-color": "rgba(223, 238, 243, 0.9)" } as CSSProperties
+              }
+            />
           </div>
           <div
             className="parallax-layer absolute -right-20 bottom-0"
             style={{ "--depth": "44px" } as CSSProperties}
           >
-            <div className="hero-blob hero-blob-delay-1 h-96 w-96 rounded-full bg-[#f3e7dc] blur-3xl opacity-80" />
+            <div
+              className="hero-blob hero-blob-delay-1 soft-blob h-[32rem] w-[32rem]"
+              style={
+                { "--blob-color": "rgba(243, 231, 220, 0.9)" } as CSSProperties
+              }
+            />
           </div>
           <svg
-            className="absolute inset-0 h-full w-full"
+            className="wave-sway absolute inset-0 h-full w-full"
             viewBox="0 0 1440 700"
             preserveAspectRatio="xMidYMid slice"
           >
@@ -69,18 +85,6 @@ export default function CTAFooter() {
                   className="draw-on-visible"
                   style={
                     { "--draw-delay": `${index * 250}ms` } as CSSProperties
-                  }
-                />
-                <path
-                  d={d}
-                  pathLength={1}
-                  fill="none"
-                  stroke="rgba(99,178,163,0.6)"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  className="flow-pulse"
-                  style={
-                    { "--flow-delay": `${2000 + index * 2500}ms` } as CSSProperties
                   }
                 />
               </g>
@@ -107,7 +111,10 @@ export default function CTAFooter() {
               sin dolor.
             </p>
 
-            <div ref={buttonRef} className="magnetic mx-auto mt-12 max-w-[320px]">
+            <div
+              ref={buttonRef}
+              className="magnetic mx-auto mt-12 max-w-[320px]"
+            >
               <Button
                 size="lg"
                 onClick={() => {

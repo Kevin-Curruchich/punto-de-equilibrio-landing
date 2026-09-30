@@ -1,7 +1,7 @@
 import { useState, type CSSProperties } from "react";
 import useRevealOnScroll from "@/hooks/useRevealOnScroll";
 import SplitText from "@/components/motion/SplitText";
-import { prefersReducedMotion } from "@/hooks/useMotion";
+import { prefersReducedMotion, useInViewAnimations } from "@/hooks/useMotion";
 import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -32,6 +32,7 @@ const testimonials = [
 const AUTOPLAY_MS = 7000;
 
 export default function TestimonialsSection() {
+  const sectionRef = useInViewAnimations<HTMLElement>();
   const headingRef = useRevealOnScroll<HTMLHeadingElement>();
   const contentRef = useRevealOnScroll<HTMLDivElement>();
   const [activeIndex, setActiveIndex] = useState(0);
@@ -47,10 +48,7 @@ export default function TestimonialsSection() {
   const goNext = () => goTo((activeIndex + 1) % testimonials.length, "next");
 
   const goPrev = () =>
-    goTo(
-      (activeIndex - 1 + testimonials.length) % testimonials.length,
-      "prev",
-    );
+    goTo((activeIndex - 1 + testimonials.length) % testimonials.length, "prev");
 
   const current = testimonials[activeIndex];
   const isRunning = isPlaying && !isHovered;
@@ -58,6 +56,7 @@ export default function TestimonialsSection() {
   return (
     <section
       id="testimonios"
+      ref={sectionRef}
       className="bg-cream py-24 md:py-32 lg:py-[120px]"
     >
       <div className="max-w-[1000px] mx-auto px-6">

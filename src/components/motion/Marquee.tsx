@@ -1,3 +1,5 @@
+import { useInViewAnimations } from "@/hooks/useMotion";
+
 const words = [
   "Movilidad",
   "Fuerza",
@@ -45,8 +47,11 @@ function MarqueeGroup({ hidden = false }: { hidden?: boolean }) {
 
 /** Infinite band of the values the treatment works on. */
 export default function Marquee() {
+  const sectionRef = useInViewAnimations<HTMLElement>();
+
   return (
     <section
+      ref={sectionRef}
       aria-label="Lo que trabajamos contigo"
       className="marquee relative overflow-hidden border-y border-k-line bg-cream py-8 md:py-10"
     >
