@@ -2,8 +2,7 @@ import { useEffect, useState, type CSSProperties } from "react";
 import useRevealOnScroll from "@/hooks/useRevealOnScroll";
 import SplitText from "@/components/motion/SplitText";
 import { prefersReducedMotion, useTilt } from "@/hooks/useMotion";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 import {
   type CarouselApi,
   Carousel,
@@ -47,7 +46,9 @@ const services = [
 const AUTOPLAY_MS = 4500;
 const DESKTOP_QUERY = "(min-width: 1024px)";
 
-function ServiceCard({ service }: { service: (typeof services)[number] }) {
+type Service = (typeof services)[number];
+
+function ServiceCard({ service }: { service: Service }) {
   const tiltRef = useTilt<HTMLDivElement>(7);
 
   return (
@@ -75,25 +76,83 @@ function ServiceCard({ service }: { service: (typeof services)[number] }) {
   );
 }
 
-export default function ServicesSection() {
-  const headingRef = useRevealOnScroll<HTMLDivElement>();
+function useMediaQuery(query: string) {
+  const [matches, setMatches] = useState(
+    () => window.matchMedia(query).matches,
+  );
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia(query);
+    const handleChange = () => setMatches(mediaQuery.matches);
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, [query]);
+
+  return matches;
+}
+
+/** Desktop: an endless, hover-pausable band of cards with no controls. */
+function ServicesMarquee() {
+  const revealRef = useRevealOnScroll<HTMLDivElement>();
+
+  const renderGroup = (hidden: boolean) => (
+    <ul
+      className="flex shrink-0 gap-5 pr-5"
+      aria-hidden={hidden || undefined}
+    >
+      {services.map((service) => (
+        <li key={service.number} className="w-[360px] shrink-0">
+          <ServiceCard service={service} />
+        </li>
+      ))}
+    </ul>
+  );
+
+  return (
+    <div
+      ref={revealRef}
+      data-reveal="blur"
+      className="reveal-on-scroll marquee services-marquee mt-16 md:mt-20 overflow-hidden py-3"
+    >
+      <div
+        className="marquee-track"
+        style={{ "--marquee-duration": "45s" } as CSSProperties}
+      >
+        {renderGroup(false)}
+        {renderGroup(true)}
+      </div>
+    </div>
+  );
+}
+
+/** Reduced motion on desktop: all services visible, nothing moves. */
+function ServicesGrid() {
+  const revealRef = useRevealOnScroll<HTMLUListElement>();
+
+  return (
+    <ul
+      ref={revealRef}
+      className="reveal-stagger mt-16 md:mt-20 grid grid-cols-3 gap-5"
+    >
+      {services.map((service, index) => (
+        <li
+          key={service.number}
+          style={{ "--reveal-index": index } as CSSProperties}
+        >
+          <ServiceCard service={service} />
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** Mobile/tablet: swipeable carousel with an autoplay progress bar. */
+function ServicesCarousel() {
   const carouselRef = useRevealOnScroll<HTMLDivElement>();
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(
-    () => window.matchMedia(DESKTOP_QUERY).matches,
-  );
-  // Desktop already shows three cards and has pointer controls, so the
-  // carousel only autoplays on smaller screens.
-  const canAutoplay = !isDesktop && !prefersReducedMotion();
-
-  useEffect(() => {
-    const query = window.matchMedia(DESKTOP_QUERY);
-    const handleChange = () => setIsDesktop(query.matches);
-    query.addEventListener("change", handleChange);
-    return () => query.removeEventListener("change", handleChange);
-  }, []);
+  const [canAutoplay] = useState(() => !prefersReducedMotion());
 
   useEffect(() => {
     if (!carouselApi) return;
@@ -114,7 +173,82 @@ export default function ServicesSection() {
   };
 
   return (
-    <section id="servicios" className="bg-white py-24 md:py-32 lg:py-[120px]">
+    <div
+      ref={carouselRef}
+      className={isPaused ? "is-paused" : undefined}
+      onPointerEnter={(event) => {
+        if (event.pointerType === "mouse") setIsPaused(true);
+      }}
+      onPointerLeave={(event) => {
+        if (event.pointerType === "mouse") setIsPaused(false);
+      }}
+      // Hold autoplay while a finger is dragging the carousel.
+      onPointerDown={() => setIsPaused(true)}
+      onPointerUp={() => setIsPaused(false)}
+      onPointerCancel={() => setIsPaused(false)}
+      onFocus={() => setIsPaused(true)}
+      onBlur={() => setIsPaused(false)}
+    >
+      <Carousel
+        opts={{ align: "start", loop: true }}
+        setApi={setCarouselApi}
+        className="mt-16 md:mt-20"
+      >
+        <CarouselContent className="reveal-stagger -ml-4 py-2">
+          {services.map((service, index) => (
+            <CarouselItem
+              key={service.number}
+              className="basis-full sm:basis-1/2 pl-4"
+              style={{ "--reveal-index": index } as CSSProperties}
+            >
+              <ServiceCard service={service} />
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+      </Carousel>
+
+      {/* Position + autoplay progress */}
+      <div className="mt-10 flex items-center justify-center gap-4 font-sans text-xs text-k-text-muted">
+        <span className="tabular-nums text-k-text">
+          {String(selectedIndex + 1).padStart(2, "0")}
+        </span>
+        <div className="relative h-px w-32 overflow-hidden bg-k-line md:w-48">
+          {canAutoplay ? (
+            <div
+              key={selectedIndex}
+              className="autoplay-bar absolute inset-0 bg-k-primary"
+              style={
+                { "--autoplay-duration": `${AUTOPLAY_MS}ms` } as CSSProperties
+              }
+              onAnimationEnd={handleAutoplayEnd}
+            />
+          ) : (
+            <div
+              className="absolute inset-y-0 left-0 bg-k-primary transition-[width] duration-500"
+              style={{
+                width: `${((selectedIndex + 1) / services.length) * 100}%`,
+              }}
+            />
+          )}
+        </div>
+        <span className="tabular-nums">
+          {String(services.length).padStart(2, "0")}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+export default function ServicesSection() {
+  const headingRef = useRevealOnScroll<HTMLDivElement>();
+  const isDesktop = useMediaQuery(DESKTOP_QUERY);
+  const [reducedMotion] = useState(prefersReducedMotion);
+
+  return (
+    <section
+      id="servicios"
+      className="overflow-hidden bg-white py-24 md:py-32 lg:py-[120px]"
+    >
       <div className="max-w-[1200px] mx-auto px-6">
         {/* Heading */}
         <div ref={headingRef} className="text-center">
@@ -131,91 +265,11 @@ export default function ServicesSection() {
           </p>
         </div>
 
-        {/* Services Carousel */}
-        <div
-          ref={carouselRef}
-          className={isPaused ? "is-paused" : undefined}
-          onPointerEnter={(event) => {
-            if (event.pointerType === "mouse") setIsPaused(true);
-          }}
-          onPointerLeave={(event) => {
-            if (event.pointerType === "mouse") setIsPaused(false);
-          }}
-          // Hold autoplay while a finger is dragging the carousel.
-          onPointerDown={() => setIsPaused(true)}
-          onPointerUp={() => setIsPaused(false)}
-          onPointerCancel={() => setIsPaused(false)}
-          onFocus={() => setIsPaused(true)}
-          onBlur={() => setIsPaused(false)}
-        >
-          <Carousel
-            opts={{ align: "start", loop: true }}
-            setApi={setCarouselApi}
-            className="mt-16 md:mt-20"
-          >
-            <CarouselContent className="reveal-stagger -ml-4 py-2">
-              {services.map((service, index) => (
-                <CarouselItem
-                  key={service.number}
-                  className="basis-full sm:basis-1/2 lg:basis-1/3 pl-4"
-                  style={{ "--reveal-index": index } as CSSProperties}
-                >
-                  <ServiceCard service={service} />
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-          </Carousel>
-
-          {/* Position + autoplay progress (mobile) or arrows (desktop) */}
-          <div className="mt-10 flex items-center justify-center gap-4 font-sans text-xs text-k-text-muted">
-            {isDesktop && (
-              <Button
-                variant="ghost"
-                onClick={() => carouselApi?.scrollPrev()}
-                className="group mr-2 h-11 w-11 border border-k-line p-0 text-k-text-muted hover:bg-k-primary hover:text-white"
-                aria-label="Servicio anterior"
-              >
-                <ArrowLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-0.5" />
-              </Button>
-            )}
-            <span className="tabular-nums text-k-text">
-              {String(selectedIndex + 1).padStart(2, "0")}
-            </span>
-            <div className="relative h-px w-32 overflow-hidden bg-k-line md:w-48">
-              {canAutoplay ? (
-                <div
-                  key={selectedIndex}
-                  className="autoplay-bar absolute inset-0 bg-k-primary"
-                  style={
-                    { "--autoplay-duration": `${AUTOPLAY_MS}ms` } as CSSProperties
-                  }
-                  onAnimationEnd={handleAutoplayEnd}
-                />
-              ) : (
-                <div
-                  className="absolute inset-y-0 left-0 bg-k-primary transition-[width] duration-500"
-                  style={{
-                    width: `${((selectedIndex + 1) / services.length) * 100}%`,
-                  }}
-                />
-              )}
-            </div>
-            <span className="tabular-nums">
-              {String(services.length).padStart(2, "0")}
-            </span>
-            {isDesktop && (
-              <Button
-                variant="ghost"
-                onClick={() => carouselApi?.scrollNext()}
-                className="group ml-2 h-11 w-11 border border-k-line p-0 text-k-text-muted hover:bg-k-primary hover:text-white"
-                aria-label="Siguiente servicio"
-              >
-                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />
-              </Button>
-            )}
-          </div>
-        </div>
+        {!isDesktop && <ServicesCarousel />}
+        {isDesktop && reducedMotion && <ServicesGrid />}
       </div>
+
+      {isDesktop && !reducedMotion && <ServicesMarquee />}
     </section>
   );
 }

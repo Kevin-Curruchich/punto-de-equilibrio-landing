@@ -256,7 +256,18 @@
 .marquee-track {
   display: flex;
   width: max-content;
-  animation: marquee 38s linear infinite;
+  animation: marquee var(--marquee-duration, 38s) linear infinite;
+}
+
+/* Soft fade at both edges so cards glide in and out of view. */
+.services-marquee {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 8%,
+    black 92%,
+    transparent
+  );
 }
 
 .marquee:hover .marquee-track {
